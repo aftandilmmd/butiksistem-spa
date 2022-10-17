@@ -202,7 +202,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'kozmoz-app-butiksistem-co'
+        appId: 'butiksistem-spa-app'
       }
     },
 
