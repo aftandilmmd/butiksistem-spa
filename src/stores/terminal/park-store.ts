@@ -1,13 +1,13 @@
-import { defineStore } from "pinia";
-import { api } from "src/boot/axios";
-import { useStorage } from "@vueuse/core";
-import { useCartStore } from "src/stores/terminal/cart-store";
+import { defineStore } from 'pinia';
+import { api } from 'src/boot/axios';
+import { useStorage } from '@vueuse/core';
+import { useCartStore } from 'src/stores/terminal/cart-store';
 
 const cartStore = useCartStore();
 
-export const useParkStore = defineStore("parkStore", {
+export const useParkStore = defineStore('parkStore', {
   state: () => ({
-    parks: useStorage("parks", []),
+    parks: useStorage('parks', []),
   }),
 
   getters: {},

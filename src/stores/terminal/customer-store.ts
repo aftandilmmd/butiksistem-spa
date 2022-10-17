@@ -1,7 +1,7 @@
-import { defineStore } from "pinia";
-import { api } from "src/boot/axios";
+import { defineStore } from 'pinia';
+import { api } from 'src/boot/axios';
 
-export const useCustomerStore = defineStore("customerStore", {
+export const useCustomerStore = defineStore('customerStore', {
 
   state: () => ({
     customers: []

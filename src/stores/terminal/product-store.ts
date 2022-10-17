@@ -1,13 +1,13 @@
-import { defineStore } from "pinia";
-import { api } from "src/boot/axios";
-import { useStorage } from "@vueuse/core";
-import { getProductCategories } from "src/resources/Product";
+import { defineStore } from 'pinia';
+import { api } from 'src/boot/axios';
+import { useStorage } from '@vueuse/core';
+import { getProductCategories } from 'src/resources/Product';
 import { uniqBy } from 'lodash';
 
-export const useProductStore = defineStore("productStore", {
+export const useProductStore = defineStore('productStore', {
   state: () => ({
     products: [] ,
-    favorites: useStorage("favorites", []),
+    favorites: useStorage('favorites', []),
   }),
 
   getters: {

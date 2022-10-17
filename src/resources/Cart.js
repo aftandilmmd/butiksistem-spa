@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import { sum, groupBy } from "lodash";
+import { v4 as uuidv4 } from 'uuid';
+import { sum, groupBy } from 'lodash';
 
 import {
   getProductFirstVariant,
@@ -11,7 +11,7 @@ import {
   getVariantMetaTransactionType,
   getVariantPrice,
   getVariantQuantity
-} from "src/resources/Product";
+} from 'src/resources/Product';
 
 // Variant Attribute Getters
 function getCartItemVariantName(cart_item) {
@@ -145,17 +145,17 @@ function getCartItemCalculatedPrice(item) {
   let amount          = getCartItemVariantMetaAmount(item);
   let price           = getProductFirstVariant(item) ? getCartItemVariantPrice(item) : getCartItemPrice(item);
 
-  if (transactionType === "custom") {
+  if (transactionType === 'custom') {
     return amount;
   }
 
-  if (transactionType === "discount") {
+  if (transactionType === 'discount') {
 
-    if (discountType === "percent") {
+    if (discountType === 'percent') {
       return price - (price * amount) / 100;
     }
 
-    if (discountType === "fixed") {
+    if (discountType === 'fixed') {
       return price - amount;
     }
 
@@ -188,25 +188,25 @@ function ifItemExistsInCart(items, item) {
       return resolve( item_index );
     }
 
-    reject("Item not found in items array.");
+    reject('Item not found in items array.');
   });
 }
 
 function isCartItemVariantOverDiscounted(cart_item, variant) {
 
   // If new price is negative
-  if (getVariantMetaTransactionType(variant) === "custom") {
+  if (getVariantMetaTransactionType(variant) === 'custom') {
     return getVariantMetaAmount(variant) < 0;
   }
 
   // If given percentage is greater than 100%
-  if (getVariantMetaDiscountType(variant) === "percent" && getVariantMetaAmount(variant) > 100) {
+  if (getVariantMetaDiscountType(variant) === 'percent' && getVariantMetaAmount(variant) > 100) {
     return true;
   }
 
   // If given given fixed price is greater than variant price
   if (
-    getVariantMetaDiscountType(variant) == "fixed" &&
+    getVariantMetaDiscountType(variant) == 'fixed' &&
     getVariantMetaAmount(variant) > getVariantPrice(variant, getProductPrice(cart_item))
   ) {
     return true;

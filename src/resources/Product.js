@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 
 import ProductPrototype from 'src/resources/prototypes/ProductPrototype';
 
@@ -24,7 +24,7 @@ export function newProductWithVariant(product, variant) {
   let variant_quantity = 1;
 
   return {
-    type : "products",
+    type : 'products',
     id   : product_id,
 
     attributes:{
@@ -34,7 +34,7 @@ export function newProductWithVariant(product, variant) {
 
     relations:{
       variants : [{
-        type  : "variants",
+        type  : 'variants',
         id    : variant_id,
         attributes:{
           name     : variant_name,
@@ -53,7 +53,7 @@ export function newProductWithVariant(product, variant) {
   let cart_item = {
 
     product: {
-      type : "products",
+      type : 'products',
       id : getProductId(props.product),
       attributes : {
         name : getProductName(props.product),
@@ -65,7 +65,7 @@ export function newProductWithVariant(product, variant) {
     },
 
     variant: {
-      type  : "variants",
+      type  : 'variants',
       id    : getVariantId(variant),
       attributes:{
         name     : getVariantName(variant),

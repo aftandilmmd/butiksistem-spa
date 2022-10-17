@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import { getCartItemCalculatedPrice } from "src/resources/Cart";
+import { v4 as uuidv4 } from 'uuid';
+import { getCartItemCalculatedPrice } from 'src/resources/Cart';
 
 function CartItemResource(item = {}) {
   return {
@@ -17,8 +17,8 @@ function CartItemResource(item = {}) {
       quantity: item.variant?.quantity || 1,
 
       meta: {
-        transactionType: item.variant?.meta?.transactionType || "discount", // discount, custom
-        discountType: item.variant?.meta?.discountType || "percent", // percent, fixed
+        transactionType: item.variant?.meta?.transactionType || 'discount', // discount, custom
+        discountType: item.variant?.meta?.discountType || 'percent', // percent, fixed
         amount: +item.variant?.meta?.amount || 0,
       },
     },

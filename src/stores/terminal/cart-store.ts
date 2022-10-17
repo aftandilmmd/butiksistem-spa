@@ -1,7 +1,7 @@
-import { defineStore } from "pinia";
-import { api } from "src/boot/axios";
-import { sum } from "lodash";
-import { useStorage } from "@vueuse/core";
+import { defineStore } from 'pinia';
+import { api } from 'src/boot/axios';
+import { sum } from 'lodash';
+import { useStorage } from '@vueuse/core';
 
 import {
   ifItemExistsInCart,
@@ -12,23 +12,23 @@ import {
   getCartTotalPrice,
   removeCartItemDiscount,
   groupCartItemsByTaxRate,
-} from "src/resources/Cart";
+} from 'src/resources/Cart';
 
-import { calculateTax } from "src/utils/Money"
+import { calculateTax } from 'src/utils/Money'
 
-export const useCartStore = defineStore("cartStore", {
+export const useCartStore = defineStore('cartStore', {
 
   state: () => ({
     items: useStorage('cart',[]) ,
     customer: {
-      first_name:"",
-      last_name :"",
-      phone :"",
-      email :"",
+      first_name:'',
+      last_name :'',
+      phone :'',
+      email :'',
       delivery_address: {
-        city      :"",
-        district  :"",
-        address   :"",
+        city      :'',
+        district  :'',
+        address   :'',
       },
       meta : {}
     },
