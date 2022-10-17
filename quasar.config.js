@@ -69,7 +69,9 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        API_BASE_URL : 'http://provider.butiksistem.co'
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
