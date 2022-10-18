@@ -1,3 +1,5 @@
+import { VariantType } from './../types/Product';
+import { ProductType } from './../types/model.d';
 import { v4 as uuidv4 } from 'uuid';
 import { sum, groupBy } from 'lodash';
 
@@ -36,9 +38,9 @@ function getCartItemVariantStockCode(cart_item) {
 
 
 // Variant Attribute Setters
-function setCartItemVariantMeta(cart_item, meta = {}) {
+function setCartItemVariantMeta(cart_item: ProductType, meta = {}) {
 
-  let variant = getProductFirstVariant(cart_item);
+  const variant: VariantType = getProductFirstVariant(cart_item);
 
   variant.meta = {
     hash_id : uuidv4(),
@@ -89,7 +91,7 @@ function setCartItemVariantQuantity(variant, quantity) {
 
 function incrementCartItemQuantity(cart_item, add_quantity = 1) {
 
-  let variant = getProductFirstVariant(cart_item);
+  const variant = getProductFirstVariant(cart_item);
 
   incrementCartItemVariantQuantity(variant, add_quantity);
 
@@ -99,9 +101,9 @@ function incrementCartItemQuantity(cart_item, add_quantity = 1) {
 
 function incrementCartItemVariantQuantity(variant, add_quantity = 1) {
 
-  let old_quantity  = getVariantQuantity(variant);
+  const old_quantity  = getVariantQuantity(variant);
 
-  let new_quantity  = old_quantity + add_quantity
+  const new_quantity  = old_quantity + add_quantity
 
   setCartItemVariantQuantity(variant, new_quantity);
 
@@ -140,10 +142,10 @@ function getCartItemPrice(item) {
 }
 
 function getCartItemCalculatedPrice(item) {
-  let transactionType = getCartItemVariantMetaTransactionType(item);
-  let discountType    = getCartItemVariantMetaDiscountType(item);
-  let amount          = getCartItemVariantMetaAmount(item);
-  let price           = getProductFirstVariant(item) ? getCartItemVariantPrice(item) : getCartItemPrice(item);
+  const transactionType = getCartItemVariantMetaTransactionType(item);
+  const discountType    = getCartItemVariantMetaDiscountType(item);
+  const amount          = getCartItemVariantMetaAmount(item);
+  const price           = getProductFirstVariant(item) ? getCartItemVariantPrice(item) : getCartItemPrice(item);
 
   if (transactionType === 'custom') {
     return amount;
@@ -178,11 +180,11 @@ function getCartItemUpdatedTotalPrice(item) {
 
 function ifItemExistsInCart(items, item) {
 
-  let variant_id = getVariantId( getProductFirstVariant(item) );
+  const variant_id = getVariantId( getProductFirstVariant(item) );
 
   return new Promise((resolve, reject) => {
 
-    let item_index = items.findIndex(cart_item => getVariantId( getProductFirstVariant(cart_item) ) === variant_id );
+    const item_index = items.findIndex(cart_item => getVariantId( getProductFirstVariant(cart_item) ) === variant_id );
 
     if (item_index > -1 && variant_id) {
       return resolve( item_index );

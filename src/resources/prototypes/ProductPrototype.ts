@@ -1,3 +1,4 @@
+import { ProductType } from './../../types/model.d';
 import ApiDataProtoType from 'src/resources/prototypes/ApiDataPrototype'
 
 const ProductPrototype = {
