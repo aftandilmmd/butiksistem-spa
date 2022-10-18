@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { api } from 'src/boot/axios';
 import { sum } from 'lodash';
 import { useStorage } from '@vueuse/core';
 
@@ -42,8 +41,8 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     getCustomerFullName(state){
-      let first_name = state?.customer?.first_name;
-      let last_name  = state?.customer?.last_name;
+      const first_name = state?.customer?.first_name;
+      const last_name  = state?.customer?.last_name;
 
       if(!first_name && !last_name){
         return null;
@@ -82,13 +81,13 @@ export const useCartStore = defineStore('cartStore', {
 
     calculated_taxes(state){
 
-      let grouped_items = groupCartItemsByTaxRate(state.items);
+      const grouped_items = groupCartItemsByTaxRate(state.items);
 
-      let response = [];
+      const response = [];
 
       for (const tax_rate of Object.keys(grouped_items)) {
-        let tax_items      = grouped_items[tax_rate];
-        let total_price    = getCartTotalPrice(tax_items);
+        const tax_items      = grouped_items[tax_rate];
+        const total_price    = getCartTotalPrice(tax_items);
 
         response.push( calculateTax(total_price, tax_rate) )
       }
@@ -109,7 +108,7 @@ export const useCartStore = defineStore('cartStore', {
 
       try{
 
-        let item_index = await ifItemExistsInCart(this.items, item);
+        const item_index = await ifItemExistsInCart(this.items, item);
 
         incrementCartItemQuantity( this.items[item_index] );
 
@@ -131,7 +130,7 @@ export const useCartStore = defineStore('cartStore', {
 
       try{
 
-        let index = await ifItemExistsInCart(this.items, item);
+        const index = await ifItemExistsInCart(this.items, item);
         this.items[index] = item;
 
       }catch (e){}
@@ -142,7 +141,7 @@ export const useCartStore = defineStore('cartStore', {
 
       try{
 
-        let index = await ifItemExistsInCart(this.items, item);
+        const index = await ifItemExistsInCart(this.items, item);
 
         removeCartItemDiscount(this.items[index]);
 
