@@ -145,17 +145,17 @@
 </template>
 
 <script>
-import DialogCardActions from "src/components/terminal/_shared/dialog/DialogCardActions.vue";
-import WhiteLabel from "src/components/_shared/labels/WhiteLabel.vue";
+import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCardActions.vue';
+import WhiteLabel from 'src/components/_shared/labels/WhiteLabel.vue';
 </script>
 
 <script setup>
-import { ref, computed, onBeforeMount } from "vue";
-import { cloneDeep } from "lodash";
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { useQuasar } from "quasar";
-import { Money } from "src/utils/Money";
-import { isCartItemPriceUpdated, isCartItemVariantOverDiscounted, removeCartItemDiscount, setCartItemVariant} from "src/resources/Cart";
+import { ref, computed, onBeforeMount } from 'vue';
+import { cloneDeep } from 'lodash';
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { useQuasar } from 'quasar';
+import { Money } from 'src/utils/Money';
+import { isCartItemPriceUpdated, isCartItemVariantOverDiscounted, removeCartItemDiscount, setCartItemVariant} from 'src/resources/Cart';
 
 import {
   getProductName,
@@ -164,12 +164,12 @@ import {
   getVariantMetaDiscountType,
   getVariantMetaTransactionType,
   getVariantQuantity
-} from "src/resources/Product";
+} from 'src/resources/Product';
 
 const cartStore = useCartStore();
 const $q = useQuasar();
 
-const emit = defineEmits(["update"]);
+const emit = defineEmits(['update']);
 const props = defineProps({
   item: {
     type: Object,
@@ -186,11 +186,11 @@ onBeforeMount(() => {
 
 let remove_meta_price_message = computed(() => {
 
-  if( transaction_type.value === "custom" ){
+  if( transaction_type.value === 'custom' ){
     return `${Money(amount.value)} ÖZEL FİYATI KALDIR.`
   }
 
-  return `${amount.value}${ discount_type.value === "fixed" ? "₺" : "%" } İNDİRİMİ KALDIR.`;
+  return `${amount.value}${ discount_type.value === 'fixed' ? '₺' : '%' } İNDİRİMİ KALDIR.`;
 
 });
 
@@ -200,7 +200,7 @@ let discount_type      = computed(() => getVariantMetaDiscountType(variantForm.v
 let amount             = computed(() => getVariantMetaAmount(variantForm.value) );
 let is_over_discounted = computed(() => isCartItemVariantOverDiscounted(props.item, variantForm.value) );
 
-let over_discount_message = "Uyarı! Ürün fiyatı eksiye düştü.";
+let over_discount_message = 'Uyarı! Ürün fiyatı eksiye düştü.';
 
 function decQuantity() {
   if ( getVariantQuantity(variantForm.value) > 1){
@@ -234,12 +234,12 @@ function update() {
 
   cartStore.updateItem( updated_item );
 
-  emit("update", updated_item);
+  emit('update', updated_item);
 
   $q.notify({
-    icon   : "check",
-    type   : "positive",
-    message: "Sepet güncellendi.",
+    icon   : 'check',
+    type   : 'positive',
+    message: 'Sepet güncellendi.',
   });
 
 }
