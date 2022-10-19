@@ -1,8 +1,6 @@
 import { Dialog } from 'quasar';
 
-type ConfirmDialogParams = { title: 'Uyarı', message: 'Devam istediğinize emin misiniz?' }
-
-function confirmDialog({ title, message }: ConfirmDialogParams): Promise<void> {
+function confirmDialog({ title = 'Uyarı', message = 'Devam istediğinize emin misiniz?' } =  {}): Promise<void> {
 
   return new Promise((resolve, reject): void => {
 
@@ -27,6 +25,5 @@ function confirmDialog({ title, message }: ConfirmDialogParams): Promise<void> {
   });
 
 }
-
 
 export { confirmDialog };
