@@ -46,7 +46,7 @@ let cartStore = useCartStore();
 const emit = defineEmits(["restart"]);
 
 function restart() {
-  cartStore.resetCart();
+  cartStore.reset();
   emit("restart");
 }
 </script>
