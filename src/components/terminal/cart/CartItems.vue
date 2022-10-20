@@ -24,15 +24,15 @@
 </template>
 
 <script>
-import CartItem from "src/components/terminal/cart/CartItem.vue";
-import CartItemDetailDialog from "src/components/terminal/cart/dialog/CartItemDetailDialog.vue";
+import CartItem from 'src/components/terminal/cart/CartItem.vue';
+import CartItemDetailDialog from 'src/components/terminal/cart/dialog/CartItemDetailDialog.vue';
 </script>
 
 <script setup>
-import { ref } from "vue";
-import { confirmDialog } from "src/utils/DialogHelper";
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { getCartItemVariantQuantity, getCartItemVariantMetaHashId } from "src/resources/Cart";
+import { ref } from 'vue';
+import { confirmDialog } from 'src/utils/DialogHelper';
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { getCartItemVariantQuantity, getCartItemVariantMetaHashId } from 'src/resources/Cart';
 
 const cartStore = useCartStore();
 
@@ -44,7 +44,7 @@ function remove(item) {
   let hash_id = getCartItemVariantMetaHashId(item);
 
   confirmDialog().then(() => {
-    cartStore.removeItem(hash_id);
+    cartStore.remove(hash_id);
   });
 
 }
