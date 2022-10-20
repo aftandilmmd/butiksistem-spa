@@ -40,13 +40,13 @@
 </template>
 
 <script setup>
-import { useCartStore } from "src/stores/terminal/cart-store";
+import { useCartStore } from 'src/stores/terminal/cart-store';
 let cartStore = useCartStore();
 
-const emit = defineEmits(["restart"]);
+const emit = defineEmits(['restart']);
 
 function restart() {
   cartStore.reset();
-  emit("restart");
+  emit('restart');
 }
 </script>
