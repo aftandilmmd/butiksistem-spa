@@ -125,7 +125,7 @@
       />
     </div>
   </div>
-  <q-dialog v-model="isShowingEmptyProductDialog">
+  <q-dialog v-model="dialogs.empty_product">
     <empty-product-dialog
       :price="price"
       @add="addEmptyProduct"
@@ -135,63 +135,66 @@
 </template>
 
 <script>
-import EmptyProductDialog from "src/components/terminal/numpad/dialog/EmptyProductDialog.vue";
-import { useCartStore } from "src/stores/terminal/cart-store";
+import EmptyProductDialog from 'src/components/terminal/numpad/dialog/EmptyProductDialog.vue';
+import { useCartStore } from 'src/stores/terminal/cart-store';
 </script>
 
 <script setup>
-import { ref, computed, onActivated } from "vue";
-import { Money } from "src/utils/Money";
-import { ProductResource } from "src/resources/ProductResource";
+import { ref, computed, onActivated } from 'vue';
+import { Money } from 'src/utils/Money';
+import { ProductResource } from 'src/resources/ProductResource';
 
-const cartStore = useCartStore();
+const cart = useCartStore();
 
-const isShowingEmptyProductDialog = ref(false);
-const price = ref("");
+const price = ref('');
+
+const dialogs = reactive({
+  empty_product : false
+})
 
 let numFormatted = computed(() => {
   return Money(price.value);
 });
 
 function setNum(num) {
-  price.value += "" + num;
+  price.value += '' + num;
 
-  if (price.value.includes(".")) {
-    price.value = price.value.slice(0, price.value.indexOf(".") + 3);
+  if (price.value.includes('.')) {
+    price.value = price.value.slice(0, price.value.indexOf('.') + 3);
   }
 }
 
 function clear() {
-  price.value = "";
+  price.value = '';
 }
 
 function removeLast() {
   price.value = price.value.slice(0, -1);
 
   // If no decimal point
-  if ((price.value % 1).toFixed(2) == "0.00") {
-    price.value = price.value.replace(".", "");
+  if ((price.value % 1).toFixed(2) == '0.00') {
+    price.value = price.value.replace('.', '');
   }
 }
 
 function showEmptyProductPanel() {
-  isShowingEmptyProductDialog.value = true;
+  dialogs.empty_product = true;
 }
 
 function addEmptyProduct(product) {
-  cartStore.addItem(new ProductResource(product));
-  price.value = "";
+  cart.add(new ProductResource(product));
+  price.value = '';
 }
 
 function toggleSide() {
-  if (price.value.includes(".")) return;
+  if (price.value.includes('.')) return;
 
-  if (price.value == "") price.value = 0;
+  if (price.value == '') price.value = 0;
 
-  price.value = price.value + ".";
+  price.value = price.value + '.';
 }
 
 onActivated(() => {
-  price.value = "";
+  price.value = '';
 });
 </script>
