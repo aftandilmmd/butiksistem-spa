@@ -8,7 +8,7 @@
 
       <div v-if="hasProductQuantity(product)" @click="selectProduct(product)" class="flex flex-center -mt-12 bg-gray-400/60 absolute left-0 top-0 right-0 bottom-0" >
 
-        <white-label>{{ getProductQuantity(product) }} Adet</white-label>
+        <q-btn color="white" text-color="grey-9">{{ getProductQuantity(product) }} Adet</q-btn>
 
       </div>
 
@@ -92,24 +92,21 @@
 </template>
 
 <script>
-import ProductVariantDialog from "src/components/terminal/product/dialog/ProductVariantDialog.vue";
-import ProductStockDialog from "src/components/terminal/product/dialog/ProductStockDialog.vue";
-import WhiteLabel from "src/components/_shared/labels/WhiteLabel.vue";
+import ProductVariantDialog from 'src/components/terminal/product/dialog/ProductVariantDialog.vue';
+import ProductStockDialog from 'src/components/terminal/product/dialog/ProductStockDialog.vue';
 </script>
 
 <script setup>
 
-import { reactive, ref } from "vue";
-import { Money } from "src/utils/Money";
-import { useProductStore } from "src/stores/terminal/product-store";
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { UseImage } from "@vueuse/components";
+import { reactive, ref } from 'vue';
+import { Money } from 'src/utils/Money';
+import { useProductStore } from 'src/stores/terminal/product-store';
+import { useCartStore } from 'src/stores/terminal/cart-store';
 
 import {
 	getProductName,
 	getProductPrice,
 	getProductQuantity,
-	getProductPrimaryImage,
 	getProductFirstVariant,
 
 	getVariantName,
@@ -117,10 +114,10 @@ import {
 	hasVariantQuantity,
   hasProductMultipleVariants,
   newProductWithVariant,
-} from "src/resources/Product";
+} from 'src/resources/Product';
 
 
-let emit  = defineEmits(["select-variant", "show-stock"]);
+let emit  = defineEmits(['select-variant', 'show-stock']);
 let props = defineProps({
   product: {
     type: Object,
@@ -155,9 +152,9 @@ function selectVariant(variant) {
 
   let cart_item = newProductWithVariant(props.product, variant);
 
-  cartStore.addItem(cart_item)
+  cartStore.add(cart_item)
 
-  emit("select-variant", cart_item);
+  emit('select-variant', cart_item);
 
 }
 
