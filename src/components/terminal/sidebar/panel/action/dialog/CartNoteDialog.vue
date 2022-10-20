@@ -40,17 +40,17 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref } from 'vue';
 
 const noteInputRef = ref(null);
 
 const detail = ref({
-  transactionType: "discount", // discount, custom
+  transaction_type: 'discount', // discount, custom
   variant: {
     quantity: 1,
   },
   meta: {
-    discountType: "percent", // percent, fixed
+    discountType: 'percent', // percent, fixed
     amount: 0,
   },
 });

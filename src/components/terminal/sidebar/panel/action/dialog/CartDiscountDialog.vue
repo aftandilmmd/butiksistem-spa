@@ -20,7 +20,7 @@
         <q-btn-group unelevated class="absolute right-0 mr-2">
           <q-btn
             :class="`text-xs ${
-              detail.meta.discountType == 'percent'
+              detail.meta.discount_type == 'percent'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-600'
             }`"
@@ -60,17 +60,17 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref } from 'vue';
 
 const discountInputRef = ref(null);
 
 const detail = ref({
-  transactionType: "discount", // discount, custom
+  transaction_type: 'discount', // discount, custom
   variant: {
     quantity: 1,
   },
   meta: {
-    discountType: "percent", // percent, fixed
+    discount_type: 'percent', // percent, fixed
     amount: 0,
   },
 });

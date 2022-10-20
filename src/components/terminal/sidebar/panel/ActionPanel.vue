@@ -100,19 +100,19 @@
 </template>
 
 <script>
-import CartDiscountDialog from "./action/dialog/CartDiscountDialog.vue";
-import CartNoteDialog from "./action/dialog/CartNoteDialog.vue";
-import CartParkDialog from "./action/dialog/CartParkDialog.vue";
+import CartDiscountDialog from './action/dialog/CartDiscountDialog.vue';
+import CartNoteDialog from './action/dialog/CartNoteDialog.vue';
+import CartParkDialog from './action/dialog/CartParkDialog.vue';
 </script>
 
 <script setup>
-import { ref, inject } from "vue";
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { useQuasar } from "quasar";
+import { ref, inject } from 'vue';
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { useQuasar } from 'quasar';
 
-const actionPanel = inject("actionPanel");
+const actionPanel = inject('actionPanel');
 
-const emit = defineEmits(["hide"]);
+const emit = defineEmits(['hide']);
 
 const cartStore = useCartStore();
 const $q = useQuasar();
@@ -122,15 +122,15 @@ let isShowingCartNoteDialog = ref(false);
 let isShowingCartParkDialog = ref(false);
 
 function resetCart() {
-  cartStore.resetCart();
+  cartStore.reset();
 
-  emit("hide");
+  emit('hide');
 
   $q.notify({
-    type: "positive",
-    icon: "delete_sweep",
-    message: "Sepet boşaltıldı.",
-    position: "bottom-right",
+    type: 'positive',
+    icon: 'delete_sweep',
+    message: 'Sepet boşaltıldı.',
+    position: 'bottom-right',
   });
 }
 

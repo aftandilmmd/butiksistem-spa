@@ -42,16 +42,16 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { useQuasar } from "quasar";
-import { useParkStore } from "src/stores/terminal/park-store";
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { ParkResource } from "src/resources/ParkResource";
+import { onMounted, ref } from 'vue';
+import { useQuasar } from 'quasar';
+import { useParkStore } from 'src/stores/terminal/park-store';
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { ParkResource } from 'src/resources/ParkResource';
 
-const emit = defineEmits(["parked"]);
+const emit = defineEmits(['parked']);
 
 const $q = useQuasar();
-const title = ref("");
+const title = ref('');
 const parkInputRef = ref(null);
 const parkStore = useParkStore();
 const cartStore = useCartStore();
@@ -64,14 +64,14 @@ function parkCart() {
 
   parkStore.addPark(park);
 
-  emit("parked", park.hash_id);
+  emit('parked', park.hash_id);
 
-  cartStore.resetCart();
+  cartStore.reset();
 
   $q.notify({
-    type: "positive",
-    icon: "check",
-    message: "Sepetiniz park edildi.",
+    type: 'positive',
+    icon: 'check',
+    message: 'Sepetiniz park edildi.',
   });
 }
 
