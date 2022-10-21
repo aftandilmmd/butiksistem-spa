@@ -1,7 +1,7 @@
 import { TransactionType } from 'src/types/model.d';
 import { CartInterface, VariantTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRate } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
-import { sumBy } from 'lodash';
+import { NumericDictionary, sumBy } from 'lodash';
 import { useStorage } from '@vueuse/core';
 
 import {
@@ -90,12 +90,12 @@ export const useCartStore = defineStore('cartStore', {
 
     getCartTaxes(state): CartTaxRate[] {
 
-      const grouped_items = groupCartItemsByTaxRate(state.items);
+      const grouped_items: NumericDictionary<CartItemInterface[]> = groupCartItemsByTaxRate(state.items);
 
       const response: CartTaxRate[] = [];
 
       for (const tax_rate of Object.keys(grouped_items)) {
-        const tax_items = grouped_items[tax_rate];
+        const tax_items = grouped_items[Number(tax_rate)];
         const total_price = getCartTotalPrice(tax_items);
 
         response.push(calculateTax(total_price, Number(tax_rate)))
