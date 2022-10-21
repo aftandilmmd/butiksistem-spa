@@ -99,3 +99,10 @@ interface AddressInterface{
   district: string,
   address: string,
 }
+
+interface CartTaxRate{
+  rate: number,
+  tax_rate: number,
+  tax_amount: number,
+  after_tax: number
+}
