@@ -1,43 +1,42 @@
-import { ProductType } from './../../types/model.d';
 import ApiDataProtoType from 'src/resources/prototypes/ApiDataPrototype'
 
 const ProductPrototype = {
 
-  get getVariants(){
+  get getVariants() {
     return this?.relations?.variants
   },
 
-  get getFirstVariant(){
+  get getFirstVariant() {
     return this?.relations?.variants[0]
   },
 
-  get hasMultipleVariants(){
+  get hasMultipleVariants() {
     return this?.relations?.variants?.length > 1
   },
 
-  get getVariantsCount(){
+  get getVariantsCount() {
     return this?.relations?.variants?.length
   },
 
-  get getTaxRate(){
+  get getTaxRate() {
     return this?.attributes?.tax_rate || 18
   },
 
-  get getTotalQuantity(){
+  get getTotalQuantity() {
     return this.getVariants.reduce(
       (total, variant) => (total + variant?.attributes?.quantity)
-    , 0)
+      , 0)
   },
 
-  get hasQuantity(){
+  get hasQuantity() {
     return this.getQuantity > 0
   },
 
-  get getImages(){
+  get getImages() {
     return this?.relations?.images
   },
 
-  get getFirstImage(){
+  get getFirstImage() {
     return this?.relations?.images[0]
   },
 
