@@ -76,7 +76,7 @@ export const useCartStore = defineStore('cartStore', {
       return getCartTotalVariantsCount(state.items);
     },
 
-    total_price: (state): number => {
+    getTotalPrice: (state): number => {
       return getCartTotalPrice(state.items);
     },
 
