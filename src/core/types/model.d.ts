@@ -1,10 +1,13 @@
 import { RemovableRef } from '@vueuse/core'
+import { StoreDefinition, StateTree, _GettersTree, _ActionsTree } from 'pinia';
 
-type DiscountType = 'percent' | 'fixed'
+export type DiscountType = 'percent' | 'fixed'
 
-type TransactionType = 'custom' | 'discount'
+export type TransactionType = 'custom' | 'discount'
 
-type PaymentType = 'cash' | 'credit-card'
+export type PaymentType = 'cash' | 'credit-card'
+
+export type StoreType = StoreDefinition<string, StateTree , _GettersTree<StateTree>, _ActionsTree>;
 
 export interface ProductInterface{
   type : 'products',
