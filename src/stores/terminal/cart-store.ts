@@ -1,5 +1,5 @@
 import { TransactionType } from 'src/types/model.d';
-import { CartInterface, VariantTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface } from 'src/core/types/model.d';
+import { CartInterface, VariantTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRate } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
 import { sumBy } from 'lodash';
 import { useStorage } from '@vueuse/core';
@@ -88,11 +88,11 @@ export const useCartStore = defineStore('cartStore', {
       return this.getTotalPrice < 0 ? 0 : this.getTotalPrice - this.getTransactionsTotalAmount;
     },
 
-    getCartTaxes(state) {
+    getCartTaxes(state): CartTaxRate[] {
 
       const grouped_items = groupCartItemsByTaxRate(state.items);
 
-      const response = [];
+      const response: CartTaxRate[] = [];
 
       for (const tax_rate of Object.keys(grouped_items)) {
         const tax_items = grouped_items[tax_rate];
