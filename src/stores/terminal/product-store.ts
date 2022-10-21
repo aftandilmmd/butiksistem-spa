@@ -1,3 +1,4 @@
+import { ProductInterface, CategoryInterface } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
 import { useStorage } from '@vueuse/core';
@@ -6,25 +7,28 @@ import { uniqBy } from 'lodash';
 
 export const useProductStore = defineStore('productStore', {
   state: () => ({
-    products: [] ,
-    favorites: useStorage('favorites', []),
+    products: [],
+    favorites: useStorage<ProductInterface[]>('favorites', []),
   }),
 
   getters: {
 
-    isFavorited: (state) => (product_id) => state.favorites.findIndex((item) => item?.id == product_id) != -1,
+    isFavorited(state) {
+      return (product_id: number) => state.favorites.findIndex((item: ProductInterface) => item?.id == product_id) != -1
+    },
 
     formattedProducts: (state) => state.products,
 
     unique_categories: (state) => {
 
-      let categories = [];
+      const categories: CategoryInterface[] = [];
 
-      state.products.forEach( product => {
-        let product_categories = getProductCategories(product);
-        if( product_categories.length > 0){
-          categories.push(...product_categories)
-        }
+      state.products.forEach(product => {
+
+        const product_categories: CategoryInterface[] = getProductCategories(product);
+
+        (product_categories.length > 0) && categories.push(...product_categories)
+
       });
 
       return uniqBy(categories, 'id');
@@ -34,17 +38,17 @@ export const useProductStore = defineStore('productStore', {
   },
 
   actions: {
-    async getProducts() {
-      let response = await api.get('/api/products');
+    async getProducts(): Promise<void> {
+      const response = await api.get('/api/products');
       this.products = response.data.data;
     },
 
-    favorite(product) {
+    favorite(product: ProductInterface): void {
       this.favorites.push(product);
     },
 
-    unfavorite(product_id) {
-      this.favorites = this.favorites.filter((item) => item?.id != product_id);
+    unfavorite(product_id: number): void {
+      this.favorites = this.favorites.filter((item: ProductInterface) => item?.id != product_id);
     },
   },
 });

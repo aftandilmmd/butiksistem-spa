@@ -1,7 +1,8 @@
+import { CartItemInterface } from 'src/core/types/model.d';
 import { v4 as uuidv4 } from 'uuid';
 import { getCartItemCalculatedPrice } from 'src/resources/Cart';
 
-function CartItemResource(item = {}) {
+function CartItemResource(item = {}): CartItemInterface {
   return {
     id: item.id,
     name: item.name,
@@ -17,8 +18,8 @@ function CartItemResource(item = {}) {
       quantity: item.variant?.quantity || 1,
 
       meta: {
-        transactionType: item.variant?.meta?.transactionType || 'discount', // discount, custom
-        discountType: item.variant?.meta?.discountType || 'percent', // percent, fixed
+        transaction_type: item.variant?.meta?.transaction_type || 'discount', // discount, custom
+        discount_type: item.variant?.meta?.discount_type || 'percent', // percent, fixed
         amount: +item.variant?.meta?.amount || 0,
       },
     },

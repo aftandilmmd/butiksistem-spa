@@ -1,12 +1,11 @@
-import { ProductType } from './../types/model.d';
+import { VariantInterface, ProductInterface, CategoryInterface, DiscountType, TransactionType } from 'src/core/types/model.d';
+
 import { v4 as uuidv4 } from 'uuid';
 
 import ProductPrototype from 'src/resources/prototypes/ProductPrototype';
 
-import { VariantType } from 'src/types/model'
 
-
-export function Product(product: ProductType){
+export function Product(product: ProductInterface) {
 
   product = product ?? {}
 
@@ -16,37 +15,53 @@ export function Product(product: ProductType){
 
 }
 
+function getProductId(product: ProductInterface): number {
+  return product?.id;
+}
 
-export function newProductWithVariant(product: ProductType, variant: VariantType) {
+function getProductName(product: ProductInterface): string {
+  return product?.attributes?.name || '';
+}
 
-  const product_id    = getProductId(product);
-  const product_name  = getProductName(product);
+function getProductTaxRate(product: ProductInterface, default_tax_rate = 18) {
+  return product?.attributes?.tax_rate || default_tax_rate;
+}
+
+function getProductPrice(product: ProductInterface) {
+  return product?.attributes?.price;
+}
+
+export function newProductWithVariant(product: ProductInterface, variant: VariantInterface): ProductInterface {
+
+  const product_id = getProductId(product);
+  const product_name = getProductName(product);
   const product_price = getProductPrice(product);
 
-  const variant_id    = getVariantId(variant);
-  const variant_name  = getVariantName(variant);
+  const variant_id = getVariantId(variant);
+  const variant_name = getVariantName(variant);
   const variant_price = getVariantPrice(variant, product_price);
   const variant_quantity = 1;
 
   return {
-    type : 'products',
-    id   : product_id,
+    type: 'products',
+    id: product_id,
 
-    attributes:{
-      name  : product_name,
-      price : product_price,
+    attributes: {
+      name: product_name,
+      price: product_price,
+      tax_rate: 18
     },
 
-    relations:{
-      variants : [{
-        type  : 'variants',
-        id    : variant_id,
-        attributes:{
-          name     : variant_name,
-          price    : variant_price,
-          quantity : variant_quantity,
+    relations: {
+      variants: [{
+        type: 'variants',
+        id: variant_id,
+        attributes: {
+          name: variant_name,
+          price: variant_price,
+          quantity: variant_quantity,
         },
-        meta:{
+        meta: {
           hash_id: uuidv4()
         }
       }]
@@ -88,120 +103,99 @@ export function newProductWithVariant(product: ProductType, variant: VariantType
 
 }
 
-export function hasProductMultipleVariants(product: ProductType) {
+export function hasProductMultipleVariants(product: ProductInterface): boolean {
   return getProductVariantsCount(product) > 0;
 }
 
-function getProductVariants(product: ProductType) {
+function getProductVariants(product: ProductInterface): VariantInterface[] {
   return product?.relations?.variants || [];
 }
 
-function getProductVariantsCount(product: ProductType) {
-	return getProductVariants(product).length;
+function getProductVariantsCount(product: ProductInterface): number {
+  return getProductVariants(product).length;
 }
 
-function getProductFirstVariant(product: ProductType) {
-  if(getProductVariantsCount(product) > 0){
-    return product?.relations?.variants[0];
-  }
-
-  return {}
+function getProductFirstVariant(product: ProductInterface): VariantInterface {
+  return product?.relations?.variants[0] ?? {}
 }
 
-function getProductId(product: ProductType) {
-  return product?.id;
-}
-
-function getProductTaxRate(product: ProductType, default_tax_rate = 18) {
-  return product?.attributes?.tax_rate || default_tax_rate;
-}
-
-function getProductPrice(product: ProductType) {
-  return product?.attributes?.price;
-}
-
-function getVariantId(variant: VariantType) {
-  // TODO :: Create VariantPrototype
+function getVariantId(variant: VariantInterface): number {
   return variant?.id;
 }
 
-function getVariantName(variant: VariantType) {
+function getVariantName(variant: VariantInterface): string {
   return variant?.attributes?.name;
 }
 
-function getVariantQuantity(variant: VariantType) {
+function getVariantQuantity(variant: VariantInterface): number {
   return variant?.attributes?.quantity;
 }
 
-function hasVariantQuantity(variant: VariantType) {
+function hasVariantQuantity(variant: VariantInterface): boolean {
   return variant?.attributes?.quantity > 0;
 }
 
-function getVariantMetaTransactionType(variant: VariantType) {
-  return variant?.meta?.transactionType;
+function getVariantMetaTransactionType(variant: VariantInterface): TransactionType {
+  return variant?.meta?.transaction_type || 'discount';
 }
 
-function getVariantMetaDiscountType(variant: VariantType) {
-  return variant?.meta?.discountType;
+function getVariantMetaDiscountType(variant: VariantInterface): DiscountType {
+  return variant?.meta?.discount_type || 'percent';
 }
 
-function getVariantMetaAmount(variant: VariantType) {
-  return variant?.meta?.amount;
+function getVariantMetaAmount(variant: VariantInterface): number {
+  return variant?.meta?.amount || 0;
 }
 
-function getVariantMetaHashId(variant: VariantType) {
-  return variant?.meta?.hash_id;
+function getVariantMetaHashId(variant: VariantInterface): string {
+  return variant?.meta?.hash_id || '';
 }
 
-function getVariantPrice(variant: VariantType, default_price = null) {
+function getVariantPrice(variant: VariantInterface, default_price = null): number {
   return variant?.attributes?.price ?? default_price;
 }
 
-function getProductQuantity(product: ProductType) {
-  return getProductVariants(product).reduce((total: number, variant: VariantType) => total + getVariantQuantity(variant), 0);
+function getProductQuantity(product: ProductInterface) {
+  return getProductVariants(product).reduce((total: number, variant: VariantInterface) => total + getVariantQuantity(variant), 0);
 }
 
-function hasProductQuantity(product: ProductType) {
+function hasProductQuantity(product: ProductInterface): boolean {
   return getProductQuantity(product) > 0;
 }
 
-function getProductImages(product: ProductType) {
-  return product?.relations?.images;
+function getProductImages(product: ProductInterface): string[] {
+  return product?.relations?.images || [];
 }
 
-function getProductPrimaryImage(product: ProductType) {
+function getProductPrimaryImage(product: ProductInterface) {
   return 'https://images.pexels.com/photos/13428312/pexels-photo-13428312.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load'; //getProductImages(product)[0];
 }
 
-function getProductName(product: ProductType) {
-  return product?.attributes?.name;
-}
-
-export function getProductCategories(product: ProductType) {
-  return product?.relations?.categories;
+export function getProductCategories(product: ProductInterface): CategoryInterface[] {
+  return product?.relations?.categories || [];
 }
 
 export {
-	getProductId,
-	getProductPrice,
-	getProductName,
-	getProductQuantity,
-	getProductImages,
-	getProductPrimaryImage,
-	getProductFirstVariant,
-	getProductVariantsCount,
+  getProductId,
+  getProductPrice,
+  getProductName,
+  getProductQuantity,
+  getProductImages,
+  getProductPrimaryImage,
+  getProductFirstVariant,
+  getProductVariantsCount,
   getProductTaxRate,
   hasProductQuantity,
 
-	// Variants
-	getProductVariants,
-	getVariantId,
-	getVariantName,
-	getVariantQuantity,
-	getVariantPrice,
-	getVariantMetaTransactionType,
-	getVariantMetaDiscountType,
-	getVariantMetaAmount,
-	getVariantMetaHashId,
+  // Variants
+  getProductVariants,
+  getVariantId,
+  getVariantName,
+  getVariantQuantity,
+  getVariantPrice,
+  getVariantMetaTransactionType,
+  getVariantMetaDiscountType,
+  getVariantMetaAmount,
+  getVariantMetaHashId,
   hasVariantQuantity,
 };

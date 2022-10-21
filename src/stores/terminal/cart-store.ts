@@ -1,5 +1,6 @@
+import { CartInterface, VariantTransactionInterface, CartItemInterface } from 'src/types/model.d';
 import { defineStore } from 'pinia';
-import { sum } from 'lodash';
+import { sumBy } from 'lodash';
 import { useStorage } from '@vueuse/core';
 
 import {
@@ -17,35 +18,30 @@ import { calculateTax } from 'src/utils/Money'
 
 export const useCartStore = defineStore('cartStore', {
 
-  state: () => ({
-    items: useStorage('cart',[]) ,
-    customer: {
-      first_name:'',
-      last_name :'',
-      phone :'',
-      email :'',
-      delivery_address: {
-        city      :'',
-        district  :'',
-        address   :'',
-      },
-      meta : {}
-    },
-    transactions: [],
-  }),
+  state(): CartInterface {
+    return {
+      items: useStorage<CartItemInterface[]>('cart', []),
+      customer: customerData,
+      transactions: [],
+    }
+  },
 
   getters: {
 
-    getCustomer(state){
+    getItems(state) {
+      return state.items
+    },
+
+    getCustomer(state) {
       return state.customer
     },
 
-    getCustomerFullName(state){
+    getCustomerFullName(state): string {
       const first_name = state?.customer?.first_name;
-      const last_name  = state?.customer?.last_name;
+      const last_name = state?.customer?.last_name;
 
-      if(!first_name && !last_name){
-        return null;
+      if (!first_name && !last_name) {
+        return '';
       }
 
       return first_name + ' ' + last_name
@@ -57,39 +53,41 @@ export const useCartStore = defineStore('cartStore', {
       customer: state.customer,
     }),
 
-    has_items: (state) => state.items.length > 0,
+    has_items: (state): boolean => state.items.length > 0,
 
-    has_customer: (state) => state.customer.first_name && state.customer.last_name,
+    has_customer(): boolean {
+      return this.getCustomerFullName.length === 0
+    },
 
-    total_items_count: (state) => state.items.length,
+    total_items_count: (state): number => state.items.length,
 
-    total_variants_count (state){
+    total_variants_count(state): number {
       return getCartTotalVariantsCount(state.items);
     },
 
-    total_price: (state) => {
+    total_price: (state): number => {
       return getCartTotalPrice(state.items);
     },
 
-    transactions_total(state) {
-      return sum(state.transactions.map((t) => t.amount));
+    transactions_total(state): number {
+      return state.transactions.length === 0 ? 0 : sumBy(state.transactions, 'amount')
     },
 
-    remaining_payment_amount() {
-      return this.priceTotal < 0 ? 0 : this.priceTotal - this.transactions_total;
+    remaining_payment_amount(): number {
+      return this.total_price < 0 ? 0 : this.total_price - this.transactions_total;
     },
 
-    calculated_taxes(state){
+    calculated_taxes(state) {
 
       const grouped_items = groupCartItemsByTaxRate(state.items);
 
       const response = [];
 
       for (const tax_rate of Object.keys(grouped_items)) {
-        const tax_items      = grouped_items[tax_rate];
-        const total_price    = getCartTotalPrice(tax_items);
+        const tax_items = grouped_items[tax_rate];
+        const total_price = getCartTotalPrice(tax_items);
 
-        response.push( calculateTax(total_price, tax_rate) )
+        response.push(calculateTax(total_price, Number(tax_rate)))
       }
 
       return response;
@@ -100,19 +98,15 @@ export const useCartStore = defineStore('cartStore', {
 
   actions: {
 
-    setCustomer(customer = {}) {
-      this.customer = customer;
-    },
+    add(item: CartItemInterface): void {
 
-    async addItem(item) {
+      try {
 
-      try{
+        const item_index = ifItemExistsInCart(this.items, item);
 
-        const item_index = await ifItemExistsInCart(this.items, item);
+        incrementCartItemQuantity(this.items[item_index]);
 
-        incrementCartItemQuantity( this.items[item_index] );
-
-      }catch (e){
+      } catch (e) {
 
         resetCartItemVariantDiscount(item);
 
@@ -122,51 +116,67 @@ export const useCartStore = defineStore('cartStore', {
 
     },
 
-    removeItem(hash_id) {
+    remove(hash_id: string): void {
       this.items = filterCartByItemHashId(this.items, hash_id);
     },
 
-    async updateItem(item) {
+    update(item: CartItemInterface): void {
 
-      try{
-
-        const index = await ifItemExistsInCart(this.items, item);
+      try {
+        const index = ifItemExistsInCart(this.items, item);
         this.items[index] = item;
-
-      }catch (e){}
-
-    },
-
-    async removeDiscountFromItem(item) {
-
-      try{
-
-        const index = await ifItemExistsInCart(this.items, item);
-
-        removeCartItemDiscount(this.items[index]);
-
-      }catch (e){}
+      } catch (e) { }
 
     },
 
-    resetCart() {
+    reset(): void {
       this.items = [];
       this.transactions = [];
       this.setCustomer({});
     },
 
-    addTransaction(transaction) {
-      this.transactions.push(transaction);
-    },
-
-    cancelTransaction(hash_id) {
-      this.transactions = this.transactions.filter((t) => t.hash_id != hash_id);
-    },
-
-    restoreCart(cart) {
+    restore(cart: CartInterface) {
       this.items = cart.items;
       this.customer = cart.customer;
     },
+
+    setCustomer(customer = {}): void {
+      this.customer = customer;
+    },
+
+    removeDiscountFromItem(item: CartItemInterface) {
+
+      try {
+        const index = ifItemExistsInCart(this.items, item);
+        removeCartItemDiscount(this.items[index]);
+      } catch (e) { }
+
+    },
+
+    addTransaction(transaction: VariantTransactionInterface): void {
+      this.transactions.push(transaction);
+    },
+
+    cancelTransaction(hash_id: string): void {
+      this.transactions = this.transactions.filter((transaction: VariantTransactionInterface) => transaction.hash_id != hash_id);
+    },
+
   },
 
 });
+
+
+function customerData(): object {
+  return {
+    first_name: '',
+    last_name: '',
+    phone: '',
+    email: '',
+    delivery_address: {
+      city: '',
+      district: '',
+      address: '',
+    },
+    meta: {}
+  }
+}
