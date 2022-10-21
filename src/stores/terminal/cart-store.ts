@@ -1,5 +1,5 @@
 import { TransactionType } from 'src/types/model.d';
-import { CartInterface, VariantTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRate } from 'src/core/types/model.d';
+import { CartInterface, CartTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRate } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
 import { NumericDictionary, sumBy } from 'lodash';
 import { useStorage } from '@vueuse/core';
@@ -166,12 +166,12 @@ export const useCartStore = defineStore('cartStore', {
 
     },
 
-    addTransaction(transaction: VariantTransactionInterface): void {
+    addTransaction(transaction: CartTransactionInterface): void {
       this.transactions.push(transaction);
     },
 
     cancelTransaction(hash_id: string): void {
-      this.transactions = this.transactions.filter((transaction: VariantTransactionInterface) => transaction.hash_id != hash_id);
+      this.transactions = this.transactions.filter((transaction: CartTransactionInterface) => transaction.hash_id != hash_id);
     },
 
     setShippingAddress(address: AddressInterface): void {
