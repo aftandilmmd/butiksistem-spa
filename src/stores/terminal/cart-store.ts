@@ -1,4 +1,3 @@
-import { TransactionType } from 'src/types/model.d';
 import { CartInterface, CartTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRate } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
 import { NumericDictionary, sumBy } from 'lodash';
@@ -25,7 +24,7 @@ export const useCartStore = defineStore('cartStore', {
       customer: <CustomerInterface>{},
       shipping_address: <AddressInterface>{},
       billing_address: <AddressInterface>{},
-      transactions: <TransactionType>[],
+      transactions: <CartTransactionInterface[]>[],
     }
   },
 
