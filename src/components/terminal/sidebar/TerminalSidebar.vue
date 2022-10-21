@@ -101,29 +101,29 @@
 </template>
 
 <script>
-import CartItems from "src/components/terminal/cart/CartItems.vue";
-import CartActions from "src/components/terminal/cart/CartActions.vue";
+import CartItems from 'src/components/terminal/cart/CartItems.vue';
+import CartActions from 'src/components/terminal/cart/CartActions.vue';
 
-import CustomerPanel from "src/components/terminal/sidebar/panel/CustomerPanel.vue";
-import ActionPanel from "src/components/terminal/sidebar/panel/ActionPanel.vue";
+import CustomerPanel from 'src/components/terminal/sidebar/panel/CustomerPanel.vue';
+import ActionPanel from 'src/components/terminal/sidebar/panel/ActionPanel.vue';
 
-import PaymentConfirmationDialog from "src/components/terminal/payment/dialog/PaymentConfirmationDialog.vue";
-import PaymentDialog from "src/components/terminal/payment/dialog/PaymentDialog.vue";
+import PaymentConfirmationDialog from 'src/components/terminal/payment/dialog/PaymentConfirmationDialog.vue';
+import PaymentDialog from 'src/components/terminal/payment/dialog/PaymentDialog.vue';
 </script>
 
 <script setup>
-import { ref, reactive, provide } from "vue";
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { useQuasar } from "quasar";
+import { ref, reactive, provide } from 'vue';
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { useQuasar } from 'quasar';
 
 const emit = defineEmits([
-  "search-customer",
-  "select-customer",
-  "create-customer",
+  'search-customer',
+  'select-customer',
+  'create-customer',
 ]);
 
-provide("actionPanel", {
-  complete: () => (currentPanel.value = "cart"),
+provide('actionPanel', {
+  complete: () => (currentPanel.value = 'cart'),
 });
 
 const $q = useQuasar();
@@ -134,32 +134,32 @@ const dialogs = reactive({
 })
 
 const cartStore    = useCartStore();
-const currentPanel = ref("cart");
+const currentPanel = ref('cart');
 
 function selectCustomer(customer) {
 
   cartStore.setCustomer(customer);
 
-  emit("select-customer", customer);
+  emit('select-customer', customer);
 
   $q.notify({
     type: 'positive',
-    position:"bottom-right",
+    position:'bottom-right',
     message: 'Müşteri seçildi.'
   });
 
 }
 
 function createCustomer() {
-  emit("create-customer");
+  emit('create-customer');
 }
 
 function showCustomerPanel() {
-  currentPanel.value = "customer";
+  currentPanel.value = 'customer';
 }
 
 function showCartPanel() {
-  currentPanel.value = "cart";
+  currentPanel.value = 'cart';
 }
 
 function showPaymentConfirmation() {
