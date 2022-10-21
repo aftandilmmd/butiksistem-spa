@@ -70,7 +70,7 @@ export const useCartStore = defineStore('cartStore', {
       return !!this.getCustomerFullName.trim()
     },
 
-    total_items_count: (state): number => state.items.length,
+    getItemsCount: (state): number => state.items.length,
 
     total_variants_count(state): number {
       return getCartTotalVariantsCount(state.items);

@@ -11,7 +11,7 @@
 
         <span class="w-1/2 text-right text-base font-medium text-gray-400">
           {{ cartStore.total_variants_count }} /
-          {{ cartStore.total_items_count }}
+          {{ cartStore.getItemsCount }}
         </span>
 
       </div>
