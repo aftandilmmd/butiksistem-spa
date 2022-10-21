@@ -48,7 +48,7 @@
       <div class="grid grid-cols-2 gap-5">
 
         <q-select
-          v-model="customer.delivery_address.city"
+          v-model="shipping_address.city"
           filled
           label="İl"
           behavior="menu"
@@ -63,7 +63,7 @@
         </q-select>
 
         <q-select
-          v-model="customer.delivery_address.district"
+          v-model="shipping_address.district"
           filled
           label="İlçe"
           behavior="menu"
@@ -77,7 +77,7 @@
 
       <div class="grid grid-cols-1 gap-5">
         <q-input
-          v-model="customer.delivery_address.address"
+          v-model="shipping_address.address"
           filled
           class="text-lg"
           label="Adres"
@@ -92,26 +92,29 @@
 </template>
 
 <script>
-import DialogCardActions from "src/components/terminal/_shared/dialog/DialogCardActions.vue";
-import NoOption from "src/components/_shared/form/select/NoOption.vue"
+import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCardActions.vue';
+import NoOption from 'src/components/_shared/form/select/NoOption.vue'
 </script>
 
 <script setup>
-import { reactive } from "vue";
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { useCustomerStore } from "src/stores/terminal/customer-store";
+import { reactive } from 'vue';
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { useCustomerStore } from 'src/stores/terminal/customer-store';
 
 const emit          = defineEmits(['save']);
 const cartStore     = useCartStore();
 const customerStore = useCustomerStore();
 
 const customer = reactive(Object.create(cartStore.getCustomer));
+const shipping_address = reactive(Object.create(cartStore.getShippingAddress));
 
 function save(){
 
   customerStore.addCustomer(customer);
 
   cartStore.setCustomer(customer);
+
+  cartStore.setShippingAddress(shipping_address);
 
   emit('save', customer)
 
