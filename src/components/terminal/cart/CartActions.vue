@@ -16,7 +16,7 @@
 
       </div>
 
-      <div v-for="tax in cartStore.calculated_taxes" :key="tax.rate" class="flex h-[1.75rem]" >
+      <div v-for="tax in cartStore.getCartTaxes" :key="tax.rate" class="flex h-[1.75rem]" >
 
         <span class="w-1/2 text-base font-medium text-gray-400">
           %{{ tax.rate }}

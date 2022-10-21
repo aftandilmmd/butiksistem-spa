@@ -88,7 +88,7 @@ export const useCartStore = defineStore('cartStore', {
       return this.getTotalPrice < 0 ? 0 : this.getTotalPrice - this.getTransactionsTotalAmount;
     },
 
-    calculated_taxes(state) {
+    getCartTaxes(state) {
 
       const grouped_items = groupCartItemsByTaxRate(state.items);
 
