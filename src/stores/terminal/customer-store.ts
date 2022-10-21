@@ -1,21 +1,23 @@
+import { CustomerInterface } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
-import { api } from 'src/boot/axios';
 
 export const useCustomerStore = defineStore('customerStore', {
 
   state: () => ({
-    customers: []
+    customers: <CustomerInterface[]>[]
   }),
 
   getters: {
-    get_customers(state){
+
+    getCustomers(state){
       return state.customers;
     }
+
   },
 
   actions: {
 
-    addCustomer(customer = {}) {
+    addCustomer(customer: CustomerInterface) {
       this.customers.push(customer);
     },
 
