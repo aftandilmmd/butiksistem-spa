@@ -151,7 +151,7 @@ export const useCartStore = defineStore('cartStore', {
       this.customer = cart.customer;
     },
 
-    setCustomer(customer = {}): void {
+    setCustomer(customer: CustomerInterface): void {
       this.customer = customer;
     },
 
