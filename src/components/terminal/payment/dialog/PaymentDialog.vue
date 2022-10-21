@@ -32,7 +32,7 @@
           <div class="w-full flex-1 flex flex-col flex-center">
             <span v-if="isOverPaid" class="text-3xl mb-10">
               <strong class="font-semibold">
-                {{ Money(-1 * cartStore.remaining_payment_amount) }}
+                {{ Money(-1 * cartStore.getTransactionsRemainingAmount) }}
               </strong>
               para üstü veriniz.
             </span>
@@ -84,7 +84,7 @@
                     ? 'bg-gray-500 text-white'
                     : 'bg-gray-100 text-gray-600'
                 }`"
-                :label="Money(cartStore.remaining_payment_amount)"
+                :label="Money(cartStore.getTransactionsRemainingAmount)"
                 no-caps
                 unelevated
                 class="rounded w-48 text-xl"
@@ -186,9 +186,9 @@
                       </span>
                       <span class="text-xl font-medium">
                         {{
-                          cartStore.remaining_payment_amount < 0
+                          cartStore.getTransactionsRemainingAmount < 0
                             ? Money(0)
-                            : Money(cartStore.remaining_payment_amount)
+                            : Money(cartStore.getTransactionsRemainingAmount)
                         }}
                       </span>
                     </div>
@@ -233,7 +233,7 @@ watch(amountType, () => {
     amount.value = "0.00";
     focusInput();
   } else {
-    amount.value = cartStore.remaining_payment_amount;
+    amount.value = cartStore.getTransactionsRemainingAmount;
   }
 });
 
@@ -286,8 +286,8 @@ function focusInput() {
   }, 50);
 }
 
-let isOverPaid = computed(() => cartStore.remaining_payment_amount < 0);
-let isPaymentCompleted = computed(() => cartStore.remaining_payment_amount <= 0);
+let isOverPaid = computed(() => cartStore.getTransactionsRemainingAmount < 0);
+let isPaymentCompleted = computed(() => cartStore.getTransactionsRemainingAmount <= 0);
 
 function restart() {
   emit("complete");

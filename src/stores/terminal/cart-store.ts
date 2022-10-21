@@ -84,7 +84,7 @@ export const useCartStore = defineStore('cartStore', {
       return state.transactions.length === 0 ? 0 : sumBy(state.transactions, 'amount')
     },
 
-    remaining_payment_amount(): number {
+    getTransactionsRemainingAmount(): number {
       return this.getTotalPrice < 0 ? 0 : this.getTotalPrice - this.getTransactionsTotalAmount;
     },
 
