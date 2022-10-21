@@ -18,7 +18,7 @@
       <div class="w-7/12 mx-auto relative flex flex-col items-center">
 
         <input
-          v-model="variantForm.attributes.quantity"
+          v-model="variant_form.attributes.quantity"
           class="w-full rounded p-3 py-2 text-3xl border-2 border-solid border-gray-300 focus:border-gray-400 text-center"
         />
 
@@ -42,10 +42,10 @@
         <q-btn-group unelevated class="w-full mb-8" spread>
 
           <q-btn
-            @click="settransaction_type('discount')"
+            @click="setTransactionType('discount')"
             no-caps
             :class="`${
-              transaction_type === 'discount'
+              variant_form.meta.transaction_type === 'discount'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-600'
             }`"
@@ -54,10 +54,10 @@
           />
 
           <q-btn
-            @click="settransaction_type('custom')"
+            @click="setTransactionType('custom')"
             no-caps
             :class="`${
-              transaction_type === 'custom'
+              variant_form.meta.transaction_type === 'custom'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-600'
             }`"
@@ -71,14 +71,14 @@
 
       <div class="w-full flex flex-row items-center gap-5">
 
-        <div v-if="transaction_type == 'discount'">
+        <div v-if="variant_form.meta.transaction_type == 'discount'">
 
           <q-btn-group unelevated>
 
             <q-btn
-              @click="setdiscount_type('percent')"
+              @click="setDiscountType('percent')"
               :class="`text-xs ${
-                discount_type == 'percent'
+                variant_form.meta.discount_type == 'percent'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-600'
               }`"
@@ -87,9 +87,9 @@
             />
 
             <q-btn
-              @click="setdiscount_type('fixed')"
+              @click="setDiscountType('fixed')"
               :class="`text-xs ${
-                discount_type == 'fixed'
+                variant_form.meta.discount_type == 'fixed'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-600'
               }`"
@@ -107,16 +107,15 @@
           :error="is_over_discounted"
           :error-message="over_discount_message"
           outlined
-          ref="amountRef"
           type="number"
-          v-model="variantForm.meta.amount"
+          v-model="variant_form.meta.amount"
           class="flex-1 text-right text-xl"
         >
-          <template v-if="transaction_type == 'discount'" v-slot:prepend>
+          <template v-if="variant_form.meta.transaction_type == 'discount'" v-slot:prepend>
 
-            <q-icon v-if="discount_type == 'percent'" name="percent" />
+            <q-icon v-if="variant_form.meta.discount_type == 'percent'" name="percent" />
 
-            <q-icon v-if="discount_type == 'fixed'" name="currency_lira" />
+            <q-icon v-if="variant_form.meta.discount_type == 'fixed'" name="currency_lira" />
 
           </template>
 
@@ -128,9 +127,9 @@
 
       </div>
 
-      <div v-if="has_discount" @click="removeMetaPrice" class="cursor-pointer absolute left-0 top-0 right-0 bottom-0 bg-white/80 flex flex-center">
+      <div v-if="has_discount" class="absolute left-0 top-0 right-0 bottom-0 bg-white flex flex-center">
 
-        <white-label :label="remove_meta_price_message" />
+        <q-btn @click="removeDiscount" :label="remove_meta_price_message" text-color="grey-10" color="white" class="py-3" />
 
       </div>
 
@@ -144,95 +143,97 @@
   </q-card>
 </template>
 
-<script>
-import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCardActions.vue';
-import WhiteLabel from 'src/components/_shared/labels/WhiteLabel.vue';
-</script>
+<script setup lang="ts">
 
-<script setup>
+import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCardActions.vue';
+
 import { ref, computed, onBeforeMount } from 'vue';
 import { cloneDeep } from 'lodash';
 import { useCartStore } from 'src/stores/terminal/cart-store';
 import { useQuasar } from 'quasar';
 import { Money } from 'src/utils/Money';
-import { isCartItemPriceUpdated, isCartItemVariantOverDiscounted, removeCartItemDiscount, setCartItemVariant} from 'src/resources/Cart';
+import { CartItemInterface, DiscountType, TransactionType } from 'src/core/types/model'
 
 import {
-  getProductName,
-  getProductFirstVariant,
-  getVariantMetaAmount,
-  getVariantMetaDiscountType,
-  getVariantMetaTransactionType,
-  getVariantQuantity
-} from 'src/resources/Product';
+  isCartItemPriceUpdated,
+  isCartItemVariantOverDiscounted,
+  getCartItemVariantMetaAmount,
+  removeCartItemDiscount,
+  setCartItemVariant,
+} from 'src/resources/Cart';
+
+import { getProductName, getProductFirstVariant, getVariantQuantity } from 'src/resources/Product';
 
 const cartStore = useCartStore();
 const $q = useQuasar();
 
-const emit = defineEmits(['update']);
-const props = defineProps({
-  item: {
-    type: Object,
-    default: () => ({}),
-  },
-});
+const props = defineProps<{ item: CartItemInterface }>()
+const emit  = defineEmits<{ (e: 'update', value: CartItemInterface): void }>()
 
-let amountRef     = ref(null);
-const variantForm = ref({});
+let updated_item   = cloneDeep(props.item);
+const variant_form = ref({
+  type  : 'variants',
+  id    : 0,
+
+  attributes:{
+    name     : '',
+    price    : 0,
+    quantity : 0,
+  },
+
+  meta:{
+    hash_id: '',
+    transaction_type: 'custom',
+    discount_type: 'percent',
+    amount: null
+  }
+});
 
 onBeforeMount(() => {
-  variantForm.value = cloneDeep( getProductFirstVariant(props.item) );
+  variant_form.value = JSON.parse(JSON.stringify(getProductFirstVariant(props.item)));
 });
 
-let remove_meta_price_message = computed(() => {
-
-  if( transaction_type.value === 'custom' ){
-    return `${Money(amount.value)} ÖZEL FİYATI KALDIR.`
-  }
-
-  return `${amount.value}${ discount_type.value === 'fixed' ? '₺' : '%' } İNDİRİMİ KALDIR.`;
-
-});
-
-let has_discount       = computed(() => isCartItemPriceUpdated(props.item) );
-let transaction_type   = computed(() => getVariantMetaTransactionType(variantForm.value) );
-let discount_type      = computed(() => getVariantMetaDiscountType(variantForm.value) );
-let amount             = computed(() => getVariantMetaAmount(variantForm.value) );
-let is_over_discounted = computed(() => isCartItemVariantOverDiscounted(props.item, variantForm.value) );
+let has_discount = computed(() => isCartItemPriceUpdated(props.item) );
+let amount       = computed(() => getCartItemVariantMetaAmount(props.item) );
+let is_over_discounted = computed(() => isCartItemVariantOverDiscounted(props.item, variant_form.value) );
 
 let over_discount_message = 'Uyarı! Ürün fiyatı eksiye düştü.';
 
-function decQuantity() {
-  if ( getVariantQuantity(variantForm.value) > 1){
-    variantForm.value.attributes.quantity--;
+let remove_meta_price_message = computed(() => {
+return variant_form.value.meta.transaction_type === 'custom' ?
+      `${Money(amount.value)} ÖZEL FİYATI KALDIR.` :
+      `${amount.value}${ variant_form.value.meta.discount_type === 'fixed' ? '₺' : '%' } İNDİRİMİ KALDIR.`;
+});
+
+function decQuantity(): void {
+  if ( getVariantQuantity(variant_form.value) > 1){
+    variant_form.value.attributes.quantity--;
   }
 }
 
-function incQuantity() {
-  variantForm.value.attributes.quantity++;
+function incQuantity(): void {
+  variant_form.value.attributes.quantity++;
 }
 
-function settransaction_type(type) {
-  variantForm.value.meta.transaction_type = type;
+function setTransactionType(type: TransactionType): void {
+  variant_form.value.meta.transaction_type = type;
 }
 
-function setdiscount_type(type) {
-  variantForm.value.meta.discount_type = type;
+function setDiscountType(type: DiscountType): void {
+  variant_form.value.meta.discount_type = type;
 }
 
-function removeMetaPrice() {
-  removeCartItemDiscount( props.item );
+function removeDiscount(): void {
+  variant_form.value = removeCartItemDiscount( props.item ).relations.variants[0]
 }
 
-function update() {
+function update(): void {
 
-  if (is_over_discounted.value) return false;
+  if (is_over_discounted.value) return;
 
-  let updated_item = cloneDeep(props.item);
+  updated_item = setCartItemVariant(updated_item, variant_form.value);
 
-  updated_item     = setCartItemVariant(updated_item, variantForm.value);
-
-  cartStore.updateItem( updated_item );
+  cartStore.update(updated_item);
 
   emit('update', updated_item);
 
