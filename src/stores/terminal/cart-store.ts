@@ -143,7 +143,9 @@ export const useCartStore = defineStore('cartStore', {
     reset(): void {
       this.items = [];
       this.transactions = [];
-      this.setCustomer({});
+      this.customer = <CustomerInterface>{}
+      this.shipping_address = <AddressInterface>{}
+      this.billing_address = <AddressInterface>{}
     },
 
     restore(cart: CartInterface) {
