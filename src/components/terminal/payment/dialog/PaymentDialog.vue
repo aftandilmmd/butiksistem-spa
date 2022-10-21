@@ -138,7 +138,7 @@
           class="flex flex-col items-end text-gray-900 p-5 py-12 border-0 border-b border-solid border-gray-200"
         >
           <span class="text-xl mb-1">Ödenecek Tutar</span>
-          <span class="text-5xl">{{ Money(cartStore.total_price) }}</span>
+          <span class="text-5xl">{{ Money(cartStore.getTotalPrice) }}</span>
         </div>
 
         <div class="relative flex flex-1">

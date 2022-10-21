@@ -58,7 +58,7 @@
       >
         <div class="w-full flex items-center text-base">
           <span>Ödeme</span>
-          <span class="ml-auto">{{ Money(cartStore.total_price) }}</span>
+          <span class="ml-auto">{{ Money(cartStore.getTotalPrice) }}</span>
         </div>
       </q-btn>
 
