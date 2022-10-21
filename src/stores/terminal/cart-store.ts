@@ -156,7 +156,7 @@ export const useCartStore = defineStore('cartStore', {
       this.customer = customer;
     },
 
-    removeDiscountFromItem(item: CartItemInterface) {
+    removeItemDiscount(item: CartItemInterface) {
 
       try {
         const index = ifItemExistsInCart(this.items, item);
