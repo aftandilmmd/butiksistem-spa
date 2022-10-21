@@ -80,12 +80,12 @@ export const useCartStore = defineStore('cartStore', {
       return getCartTotalPrice(state.items);
     },
 
-    transactions_total(state): number {
+    getTransactionsTotalAmount(state): number {
       return state.transactions.length === 0 ? 0 : sumBy(state.transactions, 'amount')
     },
 
     remaining_payment_amount(): number {
-      return this.total_price < 0 ? 0 : this.total_price - this.transactions_total;
+      return this.getTotalPrice < 0 ? 0 : this.getTotalPrice - this.getTransactionsTotalAmount;
     },
 
     calculated_taxes(state) {
