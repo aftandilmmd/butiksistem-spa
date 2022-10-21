@@ -184,14 +184,3 @@ export const useCartStore = defineStore('cartStore', {
   },
 
 });
-
-
-function customerData(): object {
-  return {
-    first_name: '',
-    last_name: '',
-    phone: '',
-    email: '',
-    meta: {}
-  }
-}
