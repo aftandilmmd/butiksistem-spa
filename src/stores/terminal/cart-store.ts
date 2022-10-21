@@ -1,4 +1,5 @@
-import { CartInterface, VariantTransactionInterface, CartItemInterface } from 'src/types/model.d';
+import { TransactionType } from 'src/types/model.d';
+import { CartInterface, VariantTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
 import { sumBy } from 'lodash';
 import { useStorage } from '@vueuse/core';
@@ -21,8 +22,10 @@ export const useCartStore = defineStore('cartStore', {
   state(): CartInterface {
     return {
       items: useStorage<CartItemInterface[]>('cart', []),
-      customer: customerData,
-      transactions: [],
+      customer: <CustomerInterface>{},
+      shipping_address: <AddressInterface>{},
+      billing_address: <AddressInterface>{},
+      transactions: <TransactionType>[],
     }
   },
 
@@ -36,11 +39,19 @@ export const useCartStore = defineStore('cartStore', {
       return state.customer
     },
 
+    getShippingAddress(state) {
+      return state.shipping_address
+    },
+
+    getBillingAddress(state) {
+      return state.billing_address
+    },
+
     getCustomerFullName(state): string {
       const first_name = state?.customer?.first_name;
       const last_name = state?.customer?.last_name;
 
-      if (!first_name && !last_name) {
+      if (!first_name || !last_name) {
         return '';
       }
 
@@ -53,10 +64,10 @@ export const useCartStore = defineStore('cartStore', {
       customer: state.customer,
     }),
 
-    has_items: (state): boolean => state.items.length > 0,
+    hasItems: (state): boolean => state.items.length > 0,
 
-    has_customer(): boolean {
-      return this.getCustomerFullName.length === 0
+    hasCustomer(): boolean {
+      return !!this.getCustomerFullName.trim()
     },
 
     total_items_count: (state): number => state.items.length,
@@ -161,6 +172,10 @@ export const useCartStore = defineStore('cartStore', {
       this.transactions = this.transactions.filter((transaction: VariantTransactionInterface) => transaction.hash_id != hash_id);
     },
 
+    setShippingAddress(address: AddressInterface): void {
+      this.shipping_address = address;
+    },
+
   },
 
 });
@@ -172,11 +187,6 @@ function customerData(): object {
     last_name: '',
     phone: '',
     email: '',
-    delivery_address: {
-      city: '',
-      district: '',
-      address: '',
-    },
     meta: {}
   }
 }

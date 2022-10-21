@@ -5,7 +5,7 @@
 
       <div class="flex w-full h-20 bg-[#263238]">
 
-        <div v-if="cartStore.has_customer" class="flex-1 flex items-center px-4">
+        <div v-if="cartStore.hasCustomer" class="flex-1 flex items-center px-4">
 
           <div class="flex-1 flex flex-col py-2">
 
@@ -45,7 +45,7 @@
         />
 
         <q-btn
-          :disabled="!cartStore.has_items"
+          :disabled="!cartStore.hasItems"
           @click="currentPanel = 'action'"
           icon="more_horiz"
           color="blue-grey-10"
@@ -57,7 +57,7 @@
 
       </div>
 
-      <div v-if="cartStore.has_items" class="relative z-20 flex flex-col flex-1 bg-white overflow-hidden">
+      <div v-if="cartStore.hasItems" class="relative z-20 flex flex-col flex-1 bg-white overflow-hidden">
         <q-scroll-area class="w-full flex-1">
           <cart-items />
         </q-scroll-area>
