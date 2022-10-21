@@ -10,7 +10,7 @@
         </span>
 
         <span class="w-1/2 text-right text-base font-medium text-gray-400">
-          {{ cartStore.total_variants_count }} /
+          {{ cartStore.getVariantsCount }} /
           {{ cartStore.getItemsCount }}
         </span>
 
@@ -68,8 +68,8 @@
 </template>
 
 <script setup>
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { Money } from "src/utils/Money";
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { Money } from 'src/utils/Money';
 
 defineProps({
   items: {
@@ -78,7 +78,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["discount-click", "fastpay-click", "confirm-click"]);
+const emit = defineEmits(['discount-click', 'fastpay-click', 'confirm-click']);
 
 const cartStore = useCartStore();
 </script>
