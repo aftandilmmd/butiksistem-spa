@@ -178,6 +178,10 @@ export const useCartStore = defineStore('cartStore', {
       this.shipping_address = address;
     },
 
+    setBillingAddress(address: AddressInterface): void {
+      this.billing_address = address;
+    },
+
   },
 
 });
