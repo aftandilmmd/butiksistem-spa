@@ -67,7 +67,7 @@ export interface CategoryInterface{
 
 }
 
-interface VariantTransactionInterface{
+interface CartTransactionInterface{
   amount: number,
   paymentType: PaymentType,
   hash_id?: string
@@ -78,7 +78,7 @@ interface CartInterface{
   customer: CustomerInterface,
   shipping_address: AddressInterface,
   billing_address: AddressInterface,
-  transactions: VariantTransactionInterface[]
+  transactions: CartTransactionInterface[]
 }
 
 interface CartItemInterface extends ProductInterface{
