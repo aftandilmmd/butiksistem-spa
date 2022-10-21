@@ -78,7 +78,13 @@ interface CartInterface{
   customer: CustomerInterface,
   shipping_address: AddressInterface,
   billing_address: AddressInterface,
-  transactions: CartTransactionInterface[]
+  transactions: CartTransactionInterface[],
+  discount: {
+    transaction_type?: 'custom' | 'discount',
+    discount_type?: 'percent' | 'fixed',
+    amount?: number | null,
+    note?: string
+  }
 }
 
 interface CartItemInterface extends ProductInterface{
@@ -92,6 +98,7 @@ interface CustomerInterface{
   last_name: string,
   phone: string,
   email: string,
+  meta?: object
 }
 
 interface AddressInterface{
@@ -100,7 +107,7 @@ interface AddressInterface{
   address: string,
 }
 
-interface CartTaxRate{
+interface CartTaxRateInterface{
   rate: number,
   tax_rate: number,
   tax_amount: number,

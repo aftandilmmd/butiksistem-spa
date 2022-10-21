@@ -1,4 +1,4 @@
-import { CartInterface, CartTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRate } from 'src/core/types/model.d';
+import { CartInterface, CartTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRateInterface } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
 import { NumericDictionary, sumBy } from 'lodash';
 import { useStorage } from '@vueuse/core';
@@ -20,11 +20,12 @@ export const useCartStore = defineStore('cartStore', {
 
   state(): CartInterface {
     return {
-      items: useStorage<CartItemInterface[]>('cart', []),
+      items: <CartItemInterface[]>[],
       customer: <CustomerInterface>{},
       shipping_address: <AddressInterface>{},
       billing_address: <AddressInterface>{},
       transactions: <CartTransactionInterface[]>[],
+      discount: {},
     }
   },
 
@@ -87,11 +88,11 @@ export const useCartStore = defineStore('cartStore', {
       return this.getTotalPrice < 0 ? 0 : this.getTotalPrice - this.getTransactionsTotalAmount;
     },
 
-    getCartTaxes(state): CartTaxRate[] {
+    getCartTaxes(state): CartTaxRateInterface[] {
 
       const grouped_items: NumericDictionary<CartItemInterface[]> = groupCartItemsByTaxRate(state.items);
 
-      const response: CartTaxRate[] = [];
+      const response: CartTaxRateInterface[] = [];
 
       for (const tax_rate of Object.keys(grouped_items)) {
         const tax_items = grouped_items[Number(tax_rate)];
@@ -157,6 +158,15 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     removeItemDiscount(item: CartItemInterface) {
+
+      try {
+        const index = ifItemExistsInCart(this.items, item);
+        removeCartItemDiscount(this.items[index]);
+      } catch (e) { }
+
+    },
+
+    removeCartDiscount(item: CartItemInterface) {
 
       try {
         const index = ifItemExistsInCart(this.items, item);
