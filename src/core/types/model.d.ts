@@ -1,4 +1,3 @@
-import { RemovableRef } from '@vueuse/core'
 import { StoreDefinition, StateTree, _GettersTree, _ActionsTree } from 'pinia';
 
 export type DiscountType = 'percent' | 'fixed'
@@ -75,8 +74,10 @@ interface VariantTransactionInterface{
 }
 
 interface CartInterface{
-  items: RemovableRef<CartItemInterface[]>,
-  customer: object,
+  items: CartItemInterface[],
+  customer: CustomerInterface,
+  shipping_address: AddressInterface,
+  billing_address: AddressInterface,
   transactions: VariantTransactionInterface[]
 }
 
@@ -84,4 +85,17 @@ interface CartItemInterface extends ProductInterface{
   relations:{
     variants : VariantInterface[]
   }
+}
+
+interface CustomerInterface{
+  first_name: string,
+  last_name: string,
+  phone: string,
+  email: string,
+}
+
+interface AddressInterface{
+  city: string,
+  district: string,
+  address: string,
 }
