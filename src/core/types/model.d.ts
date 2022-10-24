@@ -8,6 +8,8 @@ export type PaymentType = 'cash' | 'credit-card'
 
 export type StoreType = StoreDefinition<string, StateTree , _GettersTree<StateTree>, _ActionsTree>;
 
+export type ModelType = ProductInterface | VariantInterface | CartItemInterface;
+
 export interface ProductInterface{
   type : 'products',
   id   : number,
