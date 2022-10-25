@@ -40,11 +40,11 @@ const {
   cancelButtonText = 'İptal',
   confirmButtonText = 'Kaydet'
 } = defineProps<{
-  disabled: boolean,
-  align: 'right' | 'left' | 'center' | 'between' | 'around' | 'evenly' | 'stretch' | undefined,
-  hideCancelButton: boolean,
-  cancelButtonText: string,
-  confirmButtonText: string,
+  disabled?: boolean,
+  align?: 'right' | 'left' | 'center' | 'between' | 'around' | 'evenly' | 'stretch' | undefined,
+  hideCancelButton?: boolean,
+  cancelButtonText?: string,
+  confirmButtonText?: string,
 }>();
 
 function confirm() {
