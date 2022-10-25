@@ -48,15 +48,15 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { ref } from 'vue';
 
 const gridColCount = ref(5);
 
-let emit = defineEmits(["set-grid-count"]);
+const emit  = defineEmits<{ (e: 'set-grid-count', value: number): void }>()
 
-function setGridColCount(count) {
+function setGridColCount(count: number) {
   gridColCount.value = count;
-  emit("set-grid-count", count);
+  emit('set-grid-count', count);
 }
 </script>
