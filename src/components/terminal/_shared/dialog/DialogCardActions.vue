@@ -24,43 +24,36 @@
   </q-card-actions>
 </template>
 
-<script setup>
-const emit = defineEmits(["confirm", "cancel", "close"]);
+<script setup lang="ts">
 
-const props = defineProps({
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
+const emit = defineEmits<{
+  (e: 'confirm'): void,
+  (e: 'cancel'): void,
+  (e: 'close'): void
+}>();
 
-  align: {
-    type: String,
-    default: "right",
-  },
-
-  hideCancelButton: {
-    type: Boolean,
-    default: false,
-  },
-
-  cancelButtonText: {
-    type: String,
-    default: "İptal",
-  },
-
-  confirmButtonText: {
-    type: String,
-    default: "Kaydet",
-  },
-});
+// eslint-disable-next-line vue/no-setup-props-destructure
+const {
+  disabled = false,
+  align = 'right',
+  hideCancelButton = false,
+  cancelButtonText = 'İptal',
+  confirmButtonText = 'Kaydet'
+} = defineProps<{
+  disabled: boolean,
+  align: 'right' | 'left' | 'center' | 'between' | 'around' | 'evenly' | 'stretch' | undefined,
+  hideCancelButton: boolean,
+  cancelButtonText: string,
+  confirmButtonText: string,
+}>();
 
 function confirm() {
-  emit("confirm");
-  emit("close");
+  emit('confirm');
+  emit('close');
 }
 
 function cancel() {
-  emit("cancel");
-  emit("close");
+  emit('cancel');
+  emit('close');
 }
 </script>
