@@ -89,11 +89,7 @@ interface CartInterface{
   }
 }
 
-interface CartItemInterface extends ProductInterface{
-  relations:{
-    variants : VariantInterface[]
-  }
-}
+type CartItemInterface = ProductInterface
 
 interface CustomerInterface{
   first_name: string,
@@ -144,9 +140,3 @@ interface VariantModelInterface{
   getHashId() : string,
   create() : VariantInterface,
 }
-
-type ModelInterface<T extends ProductInterface | VariantInterface>
-=
-T extends ProductInterface ?
-ProductModelInterface :
-VariantModelInterface;
