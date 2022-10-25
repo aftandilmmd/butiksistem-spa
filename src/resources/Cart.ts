@@ -1,6 +1,6 @@
 import { VariantInterface, CartItemInterface, DiscountType } from 'src/core/types/model.d';
 import { v4 as uuidv4 } from 'uuid';
-import { sum, groupBy } from 'lodash';
+import { sum, groupBy, Dictionary } from 'lodash';
 
 import {
   getProductFirstVariant,
@@ -209,7 +209,7 @@ function filterCartItemsByTaxRate(items: CartItemInterface[], tax_rate = 18) {
   return items.filter(item => item?.attributes?.tax_rate === tax_rate)
 }
 
-function groupCartItemsByTaxRate(items: CartItemInterface[]) {
+function groupCartItemsByTaxRate(items: CartItemInterface[]): Dictionary<CartItemInterface[]> {
   return groupBy(items, item => getProductTaxRate(item))
 }
 
