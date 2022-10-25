@@ -140,7 +140,7 @@ import { useCartStore } from 'src/stores/terminal/cart-store';
 </script>
 
 <script setup>
-import { ref, computed, onActivated } from 'vue';
+import { ref, computed, onActivated, reactive } from 'vue';
 import { Money } from 'src/utils/Money';
 import { ProductResource } from 'src/resources/ProductResource';
 
