@@ -46,7 +46,8 @@ import { onMounted, ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { useParkStore } from 'src/stores/terminal/park-store';
 import { useCartStore } from 'src/stores/terminal/cart-store';
-import { ParkResource } from 'src/resources/ParkResource';
+import { v4 as uuidv4 } from 'uuid';
+import * as dayjs from 'dayjs';
 
 const emit = defineEmits(['parked']);
 
@@ -57,10 +58,12 @@ const parkStore = useParkStore();
 const cartStore = useCartStore();
 
 function parkCart() {
-  let park = ParkResource({
+  let park = {
     title: title.value,
     cart: cartStore.parkState,
-  });
+    hash_id: uuidv4(),
+    parked_at: dayjs().format(),
+  };
 
   parkStore.addPark(park);
 
