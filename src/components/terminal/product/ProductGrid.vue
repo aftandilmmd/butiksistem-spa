@@ -15,7 +15,7 @@
         <product-grid-item
           v-for="product in products"
           :product="product"
-          :key="getProductId(product)"
+          :key="$(product).getId()"
         />
       </div>
     </q-scroll-area>
@@ -23,25 +23,19 @@
 
 </template>
 
-<script>
-import ProductGridItem from "src/components/terminal/product/ProductGridItem.vue";
-import ProductGridHeader from "src/components/terminal/product/ProductGridHeader.vue";
-</script>
+<script setup lang="ts">
+import ProductGridItem from 'src/components/terminal/product/ProductGridItem.vue';
+import ProductGridHeader from 'src/components/terminal/product/ProductGridHeader.vue';
 
-<script setup>
-import { ref } from "vue";
-import { getProductId } from "src/resources/Product";
+import { ref } from 'vue';
+import { ProductInterface } from 'src/core/types/model';
+import $ from 'src/core/models/Model'
 
-defineProps({
-  products: {
-    type: Array,
-    default: () => [],
-  },
-});
+defineProps<{ products: ProductInterface[] }>()
 
 const gridColsCount = ref(5);
 
-function setGridColCount(count) {
+function setGridColCount(count: number) {
   gridColsCount.value = count;
 }
 
