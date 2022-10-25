@@ -1,6 +1,7 @@
-import { VariantInterface } from 'src/core/types/model.d';
+import { v4 as uuidv4 } from 'uuid';
+import { VariantInterface, VariantModelInterface } from 'src/core/types/model.d';
 
-function Variant(model: VariantInterface){
+function Variant(model: VariantInterface): VariantModelInterface{
 
   function getId(){
     return model.id;
@@ -38,6 +39,21 @@ function Variant(model: VariantInterface){
     return model?.meta?.hash_id || '';
   }
 
+  function create(): VariantInterface {
+    return {
+      type: 'variants',
+      id: getId(),
+      attributes: {
+        name: getName(),
+        price: getPrice(),
+        quantity: 1,
+      },
+      meta: {
+        hash_id: uuidv4()
+      }
+    }
+  }
+
   return {
     getId,
     getName,
@@ -48,6 +64,7 @@ function Variant(model: VariantInterface){
     getDiscountType,
     getAmount,
     getHashId,
+    create,
   }
 
 }
