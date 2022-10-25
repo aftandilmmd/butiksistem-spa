@@ -2,18 +2,6 @@ import { VariantInterface, ProductInterface, CategoryInterface, DiscountType, Tr
 
 import { v4 as uuidv4 } from 'uuid';
 
-import ProductPrototype from 'src/resources/prototypes/ProductPrototype';
-
-
-export function Product(product: ProductInterface) {
-
-  product = product ?? {}
-
-  Object.setPrototypeOf(product, ProductPrototype);
-
-  return product;
-
-}
 
 function getProductId(product: ProductInterface): number {
   return product?.id;
@@ -23,13 +11,50 @@ function getProductName(product: ProductInterface): string {
   return product?.attributes?.name || '';
 }
 
+function getProductPrice(product: ProductInterface) {
+  return product?.attributes?.price;
+}
+
 function getProductTaxRate(product: ProductInterface, default_tax_rate = 18) {
   return product?.attributes?.tax_rate || default_tax_rate;
 }
 
-function getProductPrice(product: ProductInterface) {
-  return product?.attributes?.price;
+function getProductPrimaryImage(product: ProductInterface) {
+  return 'https://images.pexels.com/photos/13428312/pexels-photo-13428312.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load'; //getProductImages(product)[0];
 }
+
+function getProductVariants(product: ProductInterface): VariantInterface[] {
+  return product?.relations?.variants || [];
+}
+
+export function hasProductMultipleVariants(product: ProductInterface): boolean {
+  return getProductVariantsCount(product) > 0;
+}
+
+function getProductVariantsCount(product: ProductInterface): number {
+  return getProductVariants(product).length;
+}
+
+function getProductFirstVariant(product: ProductInterface): VariantInterface {
+  return product?.relations?.variants[0] ?? {}
+}
+
+function getProductImages(product: ProductInterface): string[] {
+  return product?.relations?.images || [];
+}
+
+function getProductQuantity(product: ProductInterface) {
+  return getProductVariants(product).reduce((total: number, variant: VariantInterface) => total + getVariantQuantity(variant), 0);
+}
+
+function hasProductQuantity(product: ProductInterface): boolean {
+  return getProductQuantity(product) > 0;
+}
+
+export function getProductCategories(product: ProductInterface): CategoryInterface[] {
+  return product?.relations?.categories || [];
+}
+
 
 export function newProductWithVariant(product: ProductInterface, variant: VariantInterface): ProductInterface {
 
@@ -103,22 +128,9 @@ export function newProductWithVariant(product: ProductInterface, variant: Varian
 
 }
 
-export function hasProductMultipleVariants(product: ProductInterface): boolean {
-  return getProductVariantsCount(product) > 0;
-}
 
-function getProductVariants(product: ProductInterface): VariantInterface[] {
-  return product?.relations?.variants || [];
-}
 
-function getProductVariantsCount(product: ProductInterface): number {
-  return getProductVariants(product).length;
-}
-
-function getProductFirstVariant(product: ProductInterface): VariantInterface {
-  return product?.relations?.variants[0] ?? {}
-}
-
+// Variant
 function getVariantId(variant: VariantInterface): number {
   return variant?.id;
 }
@@ -155,25 +167,6 @@ function getVariantPrice(variant: VariantInterface, default_price = null): numbe
   return variant?.attributes?.price ?? default_price;
 }
 
-function getProductQuantity(product: ProductInterface) {
-  return getProductVariants(product).reduce((total: number, variant: VariantInterface) => total + getVariantQuantity(variant), 0);
-}
-
-function hasProductQuantity(product: ProductInterface): boolean {
-  return getProductQuantity(product) > 0;
-}
-
-function getProductImages(product: ProductInterface): string[] {
-  return product?.relations?.images || [];
-}
-
-function getProductPrimaryImage(product: ProductInterface) {
-  return 'https://images.pexels.com/photos/13428312/pexels-photo-13428312.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load'; //getProductImages(product)[0];
-}
-
-export function getProductCategories(product: ProductInterface): CategoryInterface[] {
-  return product?.relations?.categories || [];
-}
 
 export {
   getProductId,
