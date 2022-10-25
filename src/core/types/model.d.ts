@@ -115,3 +115,38 @@ interface CartTaxRateInterface{
   tax_amount: number,
   after_tax: number
 }
+interface ProductModelInterface{
+  getId() : number,
+  getName() : string,
+  getPrice() : number,
+  getQuantity() : number,
+  hasQuantity() : boolean,
+  getTaxRate() : number,
+  getMainImage() : string | null,
+  getVariantsCount() : number,
+  getFirstVariant() : VariantInterface,
+  getVariants() : VariantInterface[],
+  getImages() : string[],
+  getCategories() : [] | undefined,
+  hasManyVariants() : boolean,
+  create(variant: VariantInterface | null) : ProductInterface,
+}
+
+interface VariantModelInterface{
+  getId() : number,
+  getName() : string,
+  getPrice() : number,
+  getQuantity() : number,
+  hasQuantity() : boolean,
+  getTransactionType() : TransactionType,
+  getDiscountType() : DiscountType,
+  getAmount() : number,
+  getHashId() : string,
+  create() : VariantInterface,
+}
+
+type ModelInterface<T extends ProductInterface | VariantInterface>
+=
+T extends ProductInterface ?
+ProductModelInterface :
+VariantModelInterface;
