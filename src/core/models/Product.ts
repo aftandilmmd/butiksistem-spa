@@ -1,4 +1,4 @@
-import { ProductInterface } from '../types/model.d';
+import { ProductInterface, VariantInterface, ProductModelInterface, CartItemInterface } from 'src/core/types/model.d';
 import Variant from './Variant';
 
 function Product(model: ProductInterface){
@@ -21,12 +21,12 @@ function Product(model: ProductInterface){
   }
 
   function getMainImage(){
-    return model?.relations?.images[0]
+    return getImages()[0]
   }
 
   function getQuantity(){
 
-    if( model.attributes.quantity ) return model.attributes.tax_rate;
+    if( model.attributes?.quantity ) return model.attributes.quantity;
 
     return getVariants().reduce((total: number, variant) => total + Variant(variant).getQuantity(), 0);
 
@@ -37,31 +37,51 @@ function Product(model: ProductInterface){
   }
 
   function getFirstVariant(){
-    return model?.relations?.variants[0]
+    return getVariants()[0]
   }
 
 
   // Relations
   function getVariants(){
-    return model?.relations?.variants
+    return model?.relations?.variants || []
   }
 
   function getImages(){
-    return model?.relations?.images
+    return model?.relations?.images || []
   }
 
   function getCategories(){
     return model?.relations?.categories
   }
 
-
-  // Check For Existence
   function hasQuantity(){
     return getQuantity() > 0;
   }
 
   function hasManyVariants(){
     return getVariantsCount() > 1
+  }
+
+  // Setter
+  function create(variant: VariantInterface | null){
+
+    const variants = ! variant ? [] : <VariantInterface[]>[ Variant(variant).create() ]
+
+    return <ProductInterface>{
+      type: 'products',
+      id: getId(),
+
+      attributes: {
+        name: getName(),
+        price: getPrice(),
+        tax_rate: 18
+      },
+
+      relations: {
+        variants
+      }
+    };
+
   }
 
 
@@ -82,9 +102,10 @@ function Product(model: ProductInterface){
     hasManyVariants,
     getFirstVariant,
     getVariantsCount,
+
+    create,
   }
 
 }
 
 export default Product;
-
