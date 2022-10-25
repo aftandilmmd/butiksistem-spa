@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { api } from 'src/boot/axios';
 import { useStorage } from '@vueuse/core';
 import { useCartStore } from 'src/stores/terminal/cart-store';
 
@@ -22,7 +21,7 @@ export const useParkStore = defineStore('parkStore', {
     },
 
     restorePark(park) {
-      cartStore.restoreCart(park.cart);
+      cartStore.restore(park.cart);
     },
   },
 });
