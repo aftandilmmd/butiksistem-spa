@@ -19,8 +19,8 @@
         {{ variant_name }}
       </span>
 
-      <span v-if="variant_stock_code" class="text-gray-500">
-        {{ variant_stock_code }}
+      <span v-if="barcode" class="text-gray-500">
+        {{ barcode }}
       </span>
 
       <span v-if="variant_note" class="text-gray-500">
@@ -33,20 +33,20 @@
 
       <div @click="showDetail" class="font-medium text-md text-gray-800 mr-4 mb-1">
 
-        <div v-if="isPriceUpdated" class="flex flex-col">
+        <div v-if="is_price_updated" class="flex flex-col">
 
           <span class="text-gray-400 line-through">
-            {{ total_quantity_price }}
+            {{ total_price }}
           </span>
 
           <span class="text-blue-500">
-            {{ total_updated_quantity_price }}
+            {{ updated_total_price }}
           </span>
 
         </div>
 
         <span v-else>
-          {{ total_quantity_price }}
+          {{ total_price }}
         </span>
 
       </div>
@@ -67,23 +67,13 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed } from 'vue';
 
-import { Money } from "src/utils/Money";
+import { Money } from 'src/utils/Money';
+import CartItem from 'src/core/models/CartItem';
+import Product from 'src/core/models/Product';
 
-import {
-  getCartItemVariantName,
-  getCartItemVariantQuantity,
-  getCartItemVariantNote,
-  getCartItemVariantStockCode,
-  getCartItemTotalPrice,
-  getCartItemUpdatedTotalPrice,
-  isCartItemPriceUpdated,
-} from "src/resources/Cart";
-
-import { getProductName } from "src/resources/Product";
-
-const emit = defineEmits(["remove", "show-detail"]);
+const emit = defineEmits(['remove', 'show-detail']);
 
 const props = defineProps({
   item: {
@@ -92,22 +82,21 @@ const props = defineProps({
   },
 });
 
-
 function remove() {
-  emit("remove", props.item);
+  emit('remove', props.item);
 }
 
 function showDetail() {
-  emit("show-detail", props.item);
+  emit('show-detail', props.item);
 }
 
-let product_name          = computed(() => getProductName(props.item));
-let variant_note          = computed(() => getCartItemVariantNote(props.item));
-let variant_stock_code    = computed(() => getCartItemVariantStockCode(props.item));
-let variant_name          = computed(() => getCartItemVariantName(props.item));
-let quantity              = computed(() => getCartItemVariantQuantity(props.item));
-let isPriceUpdated        = computed(() => isCartItemPriceUpdated(props.item));
-let total_quantity_price  = computed(() => Money(getCartItemTotalPrice(props.item)));
-let total_updated_quantity_price = computed(() => Money(getCartItemUpdatedTotalPrice(props.item)));
+let product_name          = computed(() => Product(props.item).getName());
+let variant_name          = computed(() => CartItem(props.item).getVariantName());
+let variant_note          = computed(() => CartItem(props.item).getNote());
+let barcode               = computed(() => CartItem(props.item).getBarcode());
+let quantity              = computed(() => CartItem(props.item).getQuantity());
+let is_price_updated      = computed(() => CartItem(props.item).isPriceUpdated());
+let total_price           = computed(() => Money(CartItem(props.item).getTotalPrice()));
+let updated_total_price   = computed(() => Money(CartItem(props.item).getUpdatedTotalPrice()));
 
 </script>
