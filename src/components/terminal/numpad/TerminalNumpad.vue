@@ -142,7 +142,6 @@ import { useCartStore } from 'src/stores/terminal/cart-store';
 <script setup>
 import { ref, computed, onActivated, reactive } from 'vue';
 import { Money } from 'src/utils/Money';
-import { ProductResource } from 'src/resources/ProductResource';
 
 const cart = useCartStore();
 
@@ -182,7 +181,7 @@ function showEmptyProductPanel() {
 }
 
 function addEmptyProduct(product) {
-  cart.add(new ProductResource(product));
+  cart.add(product);
   price.value = '';
 }
 
