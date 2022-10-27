@@ -11,8 +11,8 @@ function Variant(model: VariantInterface): VariantModelInterface{
     return model.attributes.name;
   }
 
-  function getPrice(){
-    return model.attributes.price;
+  function getPrice(default_price = null){
+    return model.attributes.price ?? default_price;
   }
 
   function getQuantity(){

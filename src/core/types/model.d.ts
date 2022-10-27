@@ -130,7 +130,7 @@ interface ProductModelInterface{
 interface VariantModelInterface{
   getId() : number,
   getName() : string,
-  getPrice() : number,
+  getPrice(default_price: number | null | undefined) : number,
   getQuantity() : number,
   hasQuantity() : boolean,
   getTransactionType() : TransactionType,
