@@ -20,12 +20,11 @@ export interface ProductInterface{
     tax_rate: number
   },
 
-  relations?:{
-    variants? : VariantInterface[],
+  relations:{
+    variants : VariantInterface[],
     categories? : [],
     images? : string[],
   }
-
 }
 
 export interface VariantInterface{
@@ -39,7 +38,7 @@ export interface VariantInterface{
     barcode? : number,
   },
 
-  meta?:{
+  meta:{
     hash_id?: string,
     transaction_type?: 'custom' | 'discount',
     discount_type?: 'percent' | 'fixed',
@@ -138,5 +137,10 @@ interface VariantModelInterface{
   getDiscountType() : DiscountType,
   getAmount() : number,
   getHashId() : string,
+  getBarcode(): number | undefined,
   create() : VariantInterface,
+  isTransactionCustom(): boolean,
+  isTransactionDiscount(): boolean,
+  isDiscountFixed(): boolean,
+  isDiscountPercent(): boolean,
 }
