@@ -74,12 +74,12 @@
 </template>
 
 <script>
-import DialogCardActions from "src/components/terminal/_shared/dialog/DialogCardActions.vue";
+import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCardActions.vue';
 </script>
 
 <script setup>
-import { ref } from "vue";
-import { Money } from "src/utils/Money";
+import { ref } from 'vue';
+import { Money } from 'src/utils/Money';
 import {
   getProductVariants,
   getProductName,
@@ -88,7 +88,7 @@ import {
   getVariantName,
   getVariantPrice,
   getVariantQuantity,
-} from "src/resources/Product";
+} from 'src/resources/Product';
 
 
 const props = defineProps({
@@ -96,13 +96,13 @@ const props = defineProps({
   default: () => ({}),
 });
 
-const emit = defineEmits(["close", "select-variant"]);
+const emit = defineEmits(['close', 'select-variant']);
 
 const selectedVariant = ref(null);
 
 function closeDialog() {
   selectedVariant.value = null;
-  emit("close");
+  emit('close');
 }
 
 function isVariantSelected(variant) {
@@ -118,14 +118,14 @@ function selectVariant(variant) {
 }
 
 function emitVariant() {
-  emit("select-variant", selectedVariant.value);
+  emit('select-variant', selectedVariant.value);
   closeDialog();
 }
 
 
 // Computed
 function _getVariantQuantityMessage(variant) {
-  return getVariantQuantity(variant) ? getVariantQuantity(variant) + " ADET KALDI" : "TÜKENDİ";
+  return getVariantQuantity(variant) ? getVariantQuantity(variant) + ' ADET KALDI' : 'TÜKENDİ';
 }
 
 function _getFormattedPrice(variant) {
@@ -136,32 +136,32 @@ function _getFormattedPrice(variant) {
 // Classes
 function _variantClasses(variant) {
   return {
-    "bg-blue-500 text-white": isVariantSelected(variant),
-    "bg-gray-100": !isVariantSelected(variant),
-    "group cursor-pointer": getVariantQuantity(variant) > 0,
+    'bg-blue-500 text-white': isVariantSelected(variant),
+    'bg-gray-100': !isVariantSelected(variant),
+    'group cursor-pointer': getVariantQuantity(variant) > 0,
   };
 }
 
 function _variantNameClasses(variant) {
   return {
-    "text-white": isVariantSelected(variant),
-    "text-gray-800": !isVariantSelected(variant),
-    "group-hover:text-white": getVariantQuantity(variant) > 0,
+    'text-white': isVariantSelected(variant),
+    'text-gray-800': !isVariantSelected(variant),
+    'group-hover:text-white': getVariantQuantity(variant) > 0,
   };
 }
 
 function _variantPriceClasses(variant) {
   return {
-    "text-white": isVariantSelected(variant),
-    "text-blue-600": !isVariantSelected(variant),
-    "group-hover:text-white": getVariantQuantity(variant) > 0,
+    'text-white': isVariantSelected(variant),
+    'text-blue-600': !isVariantSelected(variant),
+    'group-hover:text-white': getVariantQuantity(variant) > 0,
   };
 }
 
 function _variantQuantityClasses(variant) {
   return {
-    "text-gray-500": !isVariantSelected(variant),
-    "group-hover:text-white": getVariantQuantity(variant) > 0,
+    'text-gray-500': !isVariantSelected(variant),
+    'group-hover:text-white': getVariantQuantity(variant) > 0,
   };
 }
 
@@ -177,7 +177,7 @@ function _strippedBackground(variant) {
                 #fff 10px,
                 #fff 20px
               )`,
-    animation: "animatedBackground 500s linear infinite",
+    animation: 'animatedBackground 500s linear infinite',
   };
 
 }
