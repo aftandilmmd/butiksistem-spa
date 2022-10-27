@@ -10,7 +10,7 @@
       />
 
       <transition name='slide'>
-        <terminal-filters v-if='isShowingFilters' @changed='filterProductsByCategory' class='relative z-10' />
+        <terminal-filters v-if='is_showing_filters' @changed='filterProductsByCategory' class='relative z-10' />
       </transition>
 
       <keep-alive>
@@ -51,7 +51,7 @@ import TerminalTabs from 'src/components/terminal/TerminalTabs.vue';
 import TerminalSidebar from 'src/components/terminal/sidebar/TerminalSidebar.vue';
 import TerminalNumpad from 'src/components/terminal/numpad/TerminalNumpad.vue';
 import ProductGrid from 'src/components/terminal/product/ProductGrid.vue';
-import { getProductCategories } from 'src/resources/Product';
+import Product from 'src/core/models/Product';
 </script>
 
 <script setup>
@@ -60,9 +60,7 @@ import { useProductStore } from 'src/stores/terminal/product-store';
 
 const productStore = useProductStore();
 
-onMounted(() => {
-  productStore.getProducts();
-});
+onMounted(() => productStore.getProducts());
 
 const searchMode = ref('standard');
 const currentTab = ref('content');
@@ -78,16 +76,18 @@ const category_products = computed( () => {
     return productStore.favorites;
   }
 
-  return productStore.products.filter( product => {
-    let categories = getProductCategories(product);
-    if(categories.length > 0){
-      return getProductCategories(product).map(category => category.id).includes(category_filter.value)
-    }
-  })
+  return cproducts.value
 
 })
 
-const isShowingFilters = computed( () => searchMode.value === 'standard' && currentTab.value == 'content' );
+const cproducts = computed(() => productStore.products.filter( product => {
+  let categories = Product(product).getCategories();
+  if(categories.length > 0){
+    return Product(product).getCategories().map(category => category.id).includes(category_filter.value)
+  }
+}))
+
+const is_showing_filters = computed( () => searchMode.value === 'standard' && currentTab.value == 'content' );
 
 function searchModeChanged(mode) {
   searchMode.value = mode;
