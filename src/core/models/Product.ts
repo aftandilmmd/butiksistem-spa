@@ -1,7 +1,7 @@
-import { ProductInterface, VariantInterface, ProductModelInterface, CartItemInterface } from 'src/core/types/model.d';
+import { ProductInterface, VariantInterface, ProductModelInterface } from 'src/core/types/model.d';
 import Variant from './Variant';
 
-function Product(model: ProductInterface){
+function Product(model: ProductInterface): ProductModelInterface{
 
   // Getters
   function getId(){
@@ -39,7 +39,6 @@ function Product(model: ProductInterface){
   function getFirstVariant(){
     return getVariants()[0]
   }
-
 
   // Relations
   function getVariants(){
@@ -83,7 +82,6 @@ function Product(model: ProductInterface){
     };
 
   }
-
 
   // Return Methods
   return {
