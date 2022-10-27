@@ -24,7 +24,7 @@
         :disabled="isBarcodeMode"
         type="text"
         placeholder="Ürün adı, SKU veya Barkod ile ara"
-        class="flex-1 text-2xl font-normal outline-none border-0 p-6 pl-0 placeholder:text-gray-300"
+        class="flex-1 text-2xl font-normal outline-none border-0 p-6 pl-5 placeholder:text-gray-300"
         :class="{ 'opacity-30': isBarcodeMode }"
       />
 
@@ -52,24 +52,24 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed } from 'vue';
 
 const props = defineProps({
   searchMode: {
     type: String,
-    default: "standard",
+    default: 'standard',
   },
 });
 
-const emit = defineEmits(["search-mode-changed"]);
+const emit = defineEmits(['search-mode-changed']);
 
-let isBarcodeMode = computed(() => props.searchMode == "barcode");
+let isBarcodeMode = computed(() => props.searchMode == 'barcode');
 
 function toggleSearchMode() {
 
-  let mode = isBarcodeMode.value ? "standard" : "barcode";
+  let mode = isBarcodeMode.value ? 'standard' : 'barcode';
 
-  emit("search-mode-changed", mode);
+  emit('search-mode-changed', mode);
 
 }
 
