@@ -8,14 +8,12 @@
         flat
         v-close-popup
       />
-      <div
-        class="flex flex-col items-center text-4xl flex-1 absolute left-[50%] translate-x-[-50%]"
-      >
-        <span class="mb-2">{{ getProductName(product) }}</span>
+      <div class="flex flex-col items-center text-4xl flex-1 absolute left-[50%] translate-x-[-50%]">
+        <span class="mb-2">{{ Product(product).getName() }}</span>
         <span
           v-if="selectedVariant"
           class="bg-blue-500 text-white font-normal text-base rounded px-2"
-          >{{ getVariantName(selectedVariant) }}</span
+          >{{ Variant(selectedVariant).getName() }}</span
         >
       </div>
     </q-card-section>
@@ -25,8 +23,8 @@
         <h2 class="text-2xl text-gray-500 font-normal mb-10">Varyant Seçin</h2>
         <div class="flex gap-5">
           <div
-            v-for="variant in getProductVariants(product)"
-            :key="getVariantId(variant)"
+            v-for="variant in Product(product).getVariants()"
+            :key="Variant(variant).getId()"
             @click="selectVariant(variant)"
             :style="_strippedBackground(variant)"
             :class="[
@@ -40,7 +38,7 @@
                 _variantNameClasses(variant),
               ]"
             >
-              <span class="text-2xl">{{ getVariantName(variant) }}</span>
+              <span class="text-2xl">{{ Variant(variant).getName() }}</span>
               <span
                 :class="[
                   'text-sm font-normal',
@@ -80,16 +78,9 @@ import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCard
 <script setup>
 import { ref } from 'vue';
 import { Money } from 'src/utils/Money';
-import {
-  getProductVariants,
-  getProductName,
-  getProductPrice,
-  getVariantId,
-  getVariantName,
-  getVariantPrice,
-  getVariantQuantity,
-} from 'src/resources/Product';
-
+import $ from 'src/core/models/Model'
+import Variant from 'src/core/models/Variant';
+import Product from 'src/core/models/Product';
 
 const props = defineProps({
   product: Object,
@@ -106,12 +97,12 @@ function closeDialog() {
 }
 
 function isVariantSelected(variant) {
-  return getVariantId(selectedVariant.value) === getVariantId(variant);
+  return selectedVariant.value && Variant(selectedVariant.value).getId() === Variant(variant).getId();
 }
 
 function selectVariant(variant) {
 
-  if (! getVariantQuantity(variant)) return;
+  if (! Variant(variant).hasQuantity()) return;
 
   selectedVariant.value = variant;
 
@@ -125,11 +116,11 @@ function emitVariant() {
 
 // Computed
 function _getVariantQuantityMessage(variant) {
-  return getVariantQuantity(variant) ? getVariantQuantity(variant) + ' ADET KALDI' : 'TÜKENDİ';
+  return Variant(variant).hasQuantity() ? Variant(variant).getQuantity() + ' ADET KALDI' : 'TÜKENDİ';
 }
 
 function _getFormattedPrice(variant) {
-  return Money( getVariantPrice(variant, getProductPrice(props.product)) );
+  return Money( Variant(variant).getPrice(Product(props.product).getPrice()) );
 }
 
 
@@ -138,7 +129,7 @@ function _variantClasses(variant) {
   return {
     'bg-blue-500 text-white': isVariantSelected(variant),
     'bg-gray-100': !isVariantSelected(variant),
-    'group cursor-pointer': getVariantQuantity(variant) > 0,
+    'group cursor-pointer': Variant(variant).hasQuantity(),
   };
 }
 
@@ -146,7 +137,7 @@ function _variantNameClasses(variant) {
   return {
     'text-white': isVariantSelected(variant),
     'text-gray-800': !isVariantSelected(variant),
-    'group-hover:text-white': getVariantQuantity(variant) > 0,
+    'group-hover:text-white': Variant(variant).hasQuantity(),
   };
 }
 
@@ -154,20 +145,20 @@ function _variantPriceClasses(variant) {
   return {
     'text-white': isVariantSelected(variant),
     'text-blue-600': !isVariantSelected(variant),
-    'group-hover:text-white': getVariantQuantity(variant) > 0,
+    'group-hover:text-white': Variant(variant).hasQuantity(),
   };
 }
 
 function _variantQuantityClasses(variant) {
   return {
     'text-gray-500': !isVariantSelected(variant),
-    'group-hover:text-white': getVariantQuantity(variant) > 0,
+    'group-hover:text-white': Variant(variant).hasQuantity(),
   };
 }
 
 function _strippedBackground(variant) {
 
-  if (getVariantQuantity(variant)) return;
+  if (Variant(variant).hasQuantity()) return;
 
   return {
     background: `repeating-linear-gradient(
