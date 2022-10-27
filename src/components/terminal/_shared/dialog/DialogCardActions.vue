@@ -33,19 +33,19 @@ const emit = defineEmits<{
 }>();
 
 // eslint-disable-next-line vue/no-setup-props-destructure
-const {
-  disabled = false,
-  align = 'right',
-  hideCancelButton = false,
-  cancelButtonText = 'İptal',
-  confirmButtonText = 'Kaydet'
-} = defineProps<{
+withDefaults(defineProps<{
   disabled?: boolean,
   align?: 'right' | 'left' | 'center' | 'between' | 'around' | 'evenly' | 'stretch' | undefined,
   hideCancelButton?: boolean,
   cancelButtonText?: string,
   confirmButtonText?: string,
-}>();
+}>(), {
+  disabled : false,
+  align : 'right',
+  hideCancelButton : false,
+  cancelButtonText : 'İptal',
+  confirmButtonText : 'Kaydet'
+});
 
 function confirm() {
   emit('confirm');
