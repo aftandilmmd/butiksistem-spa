@@ -39,7 +39,27 @@ function Variant(model: VariantInterface): VariantModelInterface{
     return model?.meta?.hash_id || '';
   }
 
-  function create(): VariantInterface {
+  function getBarcode() {
+    return model?.attributes?.barcode;
+  }
+
+  function isTransactionCustom() {
+    return getTransactionType() == 'custom';
+  }
+
+  function isTransactionDiscount() {
+    return getTransactionType() == 'discount';
+  }
+
+  function isDiscountFixed() {
+    return getDiscountType() == 'fixed';
+  }
+
+  function isDiscountPercent() {
+    return getDiscountType() == 'percent';
+  }
+
+  function create() {
     return {
       type: 'variants',
       id: getId(),
@@ -64,7 +84,12 @@ function Variant(model: VariantInterface): VariantModelInterface{
     getDiscountType,
     getAmount,
     getHashId,
+    getBarcode,
     create,
+    isTransactionCustom,
+    isTransactionDiscount,
+    isDiscountFixed,
+    isDiscountPercent,
   }
 
 }
