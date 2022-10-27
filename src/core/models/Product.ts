@@ -50,7 +50,7 @@ function Product(model: ProductInterface): ProductModelInterface{
   }
 
   function getCategories(){
-    return model?.relations?.categories
+    return model?.relations?.categories ?? []
   }
 
   function hasQuantity(){
