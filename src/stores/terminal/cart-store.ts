@@ -1,20 +1,17 @@
 import { CartInterface, CartTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRateInterface } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
-import { NumericDictionary, sumBy } from 'lodash';
+import { sumBy } from 'lodash';
 import { useStorage } from '@vueuse/core';
+import Cart from 'src/core/models/Cart';
 
 import {
   ifItemExistsInCart,
   incrementCartItemQuantity,
-  getCartTotalVariantsCount,
   resetCartItemVariantDiscount,
   filterCartByItemHashId,
-  getCartTotalPrice,
   removeCartItemDiscount,
-  groupCartItemsByTaxRate,
 } from 'src/resources/Cart';
 
-import { calculateTax } from 'src/utils/Money'
 
 export const useCartStore = defineStore('cartStore', {
 
@@ -73,11 +70,16 @@ export const useCartStore = defineStore('cartStore', {
     getItemsCount: (state): number => state.items.length,
 
     getVariantsCount(state): number {
-      return getCartTotalVariantsCount(state.items);
+      return Cart(state.items).getVariantsCount();
     },
 
     getTotalPrice: (state): number => {
-      return getCartTotalPrice(state.items);
+      // return Cart(state.items).getTotalPrice();
+      return Cart(state.items).getUpdatedTotalPrice();
+    },
+
+    getUpdatedTotalPrice: (state): number => {
+      return Cart(state.items).getUpdatedTotalPrice();
     },
 
     getTransactionsTotalAmount(state): number {
@@ -88,21 +90,8 @@ export const useCartStore = defineStore('cartStore', {
       return this.getTotalPrice < 0 ? 0 : this.getTotalPrice - this.getTransactionsTotalAmount;
     },
 
-    getCartTaxes(state): CartTaxRateInterface[] {
-
-      const grouped_items: NumericDictionary<CartItemInterface[]> = groupCartItemsByTaxRate(state.items);
-
-      const response: CartTaxRateInterface[] = [];
-
-      for (const tax_rate of Object.keys(grouped_items)) {
-        const tax_items = grouped_items[Number(tax_rate)];
-        const total_price = getCartTotalPrice(tax_items);
-
-        response.push(calculateTax(total_price, Number(tax_rate)))
-      }
-
-      return response;
-
+    getTaxPrices(state): CartTaxRateInterface[] {
+      return Cart(state.items).getTaxPrices();
     },
 
   },
