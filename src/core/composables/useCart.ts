@@ -1,8 +1,37 @@
-import { CartItemInterface, CartInterface, CustomerInterface, AddressInterface } from 'src/core/types/model.d';
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { CartItemInterface, CartInterface, CustomerInterface, AddressInterface, CartTaxRateInterface, CartTransactionInterface } from 'src/core/types/model.d';
+import { sum } from 'lodash';
+import CartItem from '../models/CartItem';
+import CartModel from '../models/CartModel';
 
-export function useCart(store: CartInterface){
+export function useCart(store: CartInterface = useCartStore()){
 
-  function addItem(item: CartItemInterface) {
+  function getCurrentCart() {
+    return {
+      items: getItems(),
+      customer: getCustomer(),
+      shipping_address: getShippingAddress(),
+      billing_address: getBillingAddress(),
+      transactions: getTransactions(),
+      discount: store.discount
+    }
+  }
+
+  function setCurrentCart(cart: CartInterface) {
+    return {
+      items: cart.items,
+      customer: cart.customer,
+      shipping_address: cart.shipping_address,
+      billing_address: cart.billing_address,
+      transactions: cart.transactions,
+    }
+  }
+
+  function item(item: CartItemInterface) {
+    return CartItem(item);
+  }
+
+  function addItem(item: CartItemInterface): void {
     store.items.push(item)
   }
 
@@ -10,20 +39,24 @@ export function useCart(store: CartInterface){
       store.items = store.items.filter( item => item.id !== id)
   }
 
-  function updateItem(id: number, item: CartItemInterface) {
+  function updateItem(id: number, item: CartItemInterface): void {
       const item_index = store.items.findIndex( item => item.id === id)
       store.items[item_index] = item;
   }
 
-  function getCartItems(): CartItemInterface[] {
+  function getItemById(id: number): CartItemInterface | undefined {
+    return store.items.find( item => item.id === id);
+  }
+
+  function getItems(): CartItemInterface[] {
     return store.items;
   }
 
-  function setCartItems(items: CartItemInterface[]) {
-    return store.items = items;
+  function setItems(items: CartItemInterface[]): void {
+    store.items = items;
   }
 
-  function clearCartItems() {
+  function clearItems(): void {
     store.items = [];
   }
 
@@ -53,8 +86,24 @@ export function useCart(store: CartInterface){
     return store.billing_address;
   }
 
+  function addTransaction(transaction: CartTransactionInterface): void {
+    store.transactions.push(transaction);
+  }
+
+  function cancelTransaction(hash_id: string): void {
+    store.transactions = store.transactions.filter((transaction: CartTransactionInterface) => transaction.hash_id != hash_id);
+  }
+
+  function getTransactions(): CartTransactionInterface[] {
+    return store.transactions;
+  }
+
   function getTotalPrice(): number {
-    return store.items.reduce((total, item) => (total + item.price), 0)
+    return sum(store.items.map(item => CartItem(item).getTotalPrice()));
+  }
+
+  function getTaxPrices(): CartTaxRateInterface[] {
+    return CartModel(store.items).getTaxPrices();
   }
 
   function createOrder() {
@@ -62,12 +111,14 @@ export function useCart(store: CartInterface){
   }
 
   return {
+    item,
     addItem,
     removeItem,
     updateItem,
+    getItemById,
 
-    getCartItems,
-    setCartItems,
+    getItems,
+    setItems,
 
     setCustomer,
     getCustomer,
@@ -78,9 +129,16 @@ export function useCart(store: CartInterface){
     setBillingAddress,
     getBillingAddress,
 
+    getTransactions,
+    addTransaction,
+    cancelTransaction,
+
     getTotalPrice,
     createOrder,
-    clearCartItems
+    clearItems,
+    getTaxPrices,
+    getCurrentCart,
+    setCurrentCart,
   }
 
 }
