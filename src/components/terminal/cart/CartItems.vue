@@ -2,14 +2,14 @@
   <TransitionGroup name="list" tag="ul" class="w-full list-none p-0 m-0">
     <li
       v-for="item in cartStore.items"
-      :hash="getCartItemVariantMetaHashId(item)"
-      :key="getCartItemVariantMetaHashId(item)"
+      :hash="CartManager.item(item).getId()"
+      :key="CartManager.item(item).getId()"
       class="flex cursor-pointer hover:bg-blue-50 space-y-4 divide-y border-gray-200 border-0 border-b border-solid"
     >
       <transition name="fade-out" mode="out-in">
         <cart-item
           :item="item"
-          :key="getCartItemVariantQuantity(item)"
+          :key="CartManager.item(item).getQuantity()"
           @show-detail="showCartItemDetail"
           @remove="remove(item)"
           class="px-5 py-4"
@@ -18,39 +18,40 @@
     </li>
   </TransitionGroup>
 
-  <q-dialog v-model="isShowingDetailItemDialog">
+  <q-dialog v-model="dialogs.item_pricing">
     <cart-item-detail-dialog :item="itemDetail" class="max-w-[25rem]" />
   </q-dialog>
 </template>
 
-<script>
+<script setup lang="ts">
 import CartItem from 'src/components/terminal/cart/CartItem.vue';
 import CartItemDetailDialog from 'src/components/terminal/cart/dialog/CartItemDetailDialog.vue';
-</script>
 
-<script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { confirmDialog } from 'src/utils/DialogHelper';
 import { useCartStore } from 'src/stores/terminal/cart-store';
-import { getCartItemVariantQuantity, getCartItemVariantMetaHashId } from 'src/resources/Cart';
+import { CartItemType } from 'src/core/types/cart-type';
+import { useCart } from 'src/core/composables/useCart';
+
+const CartManager = useCart();
 
 const cartStore = useCartStore();
 
-let isShowingDetailItemDialog = ref(false);
-let itemDetail = ref(null);
+let itemDetail = ref<CartItemType>();
+const dialogs = reactive({
+  item_pricing: false,
+})
 
-function remove(item) {
-
-  let hash_id = getCartItemVariantMetaHashId(item);
+function remove(item: CartItemType) {
 
   confirmDialog().then(() => {
-    cartStore.remove(hash_id);
+    CartManager.removeItem( CartManager.item(item).getId() )
   });
 
 }
 
-function showCartItemDetail(item) {
+function showCartItemDetail(item: CartItemType) {
   itemDetail.value = item;
-  isShowingDetailItemDialog.value = true;
+  dialogs.item_pricing = true;
 }
 </script>
