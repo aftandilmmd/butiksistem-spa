@@ -2,12 +2,10 @@ import { CartInterface, CartTransactionInterface, CartItemInterface, AddressInte
 import { defineStore } from 'pinia';
 import { sumBy } from 'lodash';
 import { useStorage } from '@vueuse/core';
-import Cart from 'src/core/models/Cart';
+import CartModel from 'src/core/models/CartModel';
 
 import {
   ifItemExistsInCart,
-  incrementCartItemQuantity,
-  resetCartItemVariantDiscount,
   filterCartByItemHashId,
   removeCartItemDiscount,
 } from 'src/resources/Cart';
@@ -70,16 +68,16 @@ export const useCartStore = defineStore('cartStore', {
     getItemsCount: (state): number => state.items.length,
 
     getVariantsCount(state): number {
-      return Cart(state.items).getVariantsCount();
+      return CartModel(state.items).getVariantsCount();
     },
 
     getTotalPrice: (state): number => {
-      // return Cart(state.items).getTotalPrice();
-      return Cart(state.items).getUpdatedTotalPrice();
+      // return CartModel(state.items).getTotalPrice();
+      return CartModel(state.items).getUpdatedTotalPrice();
     },
 
     getUpdatedTotalPrice: (state): number => {
-      return Cart(state.items).getUpdatedTotalPrice();
+      return CartModel(state.items).getUpdatedTotalPrice();
     },
 
     getTransactionsTotalAmount(state): number {
@@ -91,7 +89,7 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     getTaxPrices(state): CartTaxRateInterface[] {
-      return Cart(state.items).getTaxPrices();
+      return CartModel(state.items).getTaxPrices();
     },
 
   },
@@ -100,18 +98,10 @@ export const useCartStore = defineStore('cartStore', {
 
     add(item: CartItemInterface): void {
 
-      try {
-
-        const item_index = ifItemExistsInCart(this.items, item);
-
-        incrementCartItemQuantity(this.items[item_index]);
-
-      } catch (e) {
-
-        resetCartItemVariantDiscount(item);
-
-        this.items.push(item);
-
+      if( CartModel(this.items).exists(item) ) {
+        CartModel(this.items).incQuantityIfExists(item)
+      }else{
+        this.items.push( item );
       }
 
     },
