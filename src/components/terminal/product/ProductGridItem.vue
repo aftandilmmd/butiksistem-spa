@@ -96,19 +96,20 @@ import ProductVariantDialog from 'src/components/terminal/product/dialog/Product
 import ProductStockDialog from 'src/components/terminal/product/dialog/ProductStockDialog.vue';
 import { ProductInterface, VariantInterface, CartItemInterface } from 'src/core/types/model';
 
-
 import { reactive, ref } from 'vue';
 import { useProductStore } from 'src/stores/terminal/product-store';
-import { useCartStore } from 'src/stores/terminal/cart-store';
 
 import { Money } from 'src/utils/Money';
 import $ from 'src/core/models/Model'
+import { useCart } from 'src/core/composables/useCart';
+import Product from 'src/core/models/Product';
+import Variant from 'src/core/models/Variant';
 
 const props = defineProps<{ product: ProductInterface }>()
 const emit  = defineEmits<{ (e: 'select-variant', value: ProductInterface | CartItemInterface): void }>()
 
 const productStore = useProductStore();
-const cartStore    = useCartStore();
+const CartManager = useCart();
 
 const dialogs = reactive({
   variant: false,
@@ -130,11 +131,11 @@ function selectProduct(product: ProductInterface): void {
 
 function selectVariant(variant: VariantInterface): void {
 
-  if (! $(variant).hasQuantity() ) return;
+  if (! Variant(variant).hasQuantity() ) return;
 
-  let cart_item = $(props.product).create(variant);
+  let cart_item = Product(props.product).create(variant);
 
-  cartStore.add(cart_item)
+  CartManager.addItem(cart_item);
 
   emit('select-variant', cart_item);
 
