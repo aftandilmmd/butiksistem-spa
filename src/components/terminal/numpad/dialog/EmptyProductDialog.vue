@@ -6,9 +6,9 @@
 
     <q-card-section class="flex flex-row items-center p-4">
       <q-select
-        v-model="product.tax"
-        :options="taxOptions"
-        :display-value="taxDisplayValue"
+        v-model="product.tax_rate"
+        :options="tax_options"
+        :display-value="tax_rate_display_value"
         emit-value
         class="w-full"
         outlined
@@ -25,7 +25,7 @@
 
     <q-card-section class="flex flex-row items-center p-4">
       <q-input
-        autogrow=""
+        autogrow
         outlined
         v-model="product.note"
         label="Not"
@@ -40,46 +40,42 @@
   </q-card>
 </template>
 
-<script>
-import DialogCardActions from "src/components/terminal/_shared/dialog/DialogCardActions.vue";
-</script>
+<script setup lang="ts">
+import DialogCardActions from '../../_shared/dialog/DialogCardActions.vue';
 
-<script setup>
-import { ref, computed, onActivated } from "vue";
-import { Money } from "src/utils/Money";
+import { ref, computed } from 'vue';
+import { Money } from 'src/utils/Money';
 
-const emit = defineEmits(["add"]);
+const emit = defineEmits(['add']);
 
 const props = defineProps({
   price: {
     type: String,
-    default: "",
+    default: '',
   },
-});
-
-let taxOptions = ref([
-  { label: "Vergi Yok", value: 0 },
-  { label: "1%", value: "1" },
-  { label: "8%", value: "8" },
-  { label: "18%", value: "18" },
-]);
-
-let taxDisplayValue = computed(() => {
-  return taxOptions.value.find((tax) => tax.value == product.value.tax).label;
 });
 
 const product = ref({
-  name: "Tanımsız Ürün",
-  tax: "",
-  note: "",
-  variant: {
-    quantity: 1,
-    price: 0,
-  },
+  name: 'Tanımsız Ürün',
+  tax_rate: 0,
+  note: '',
+  quantity: 1,
+  price: 0,
+});
+
+let tax_options = ref([
+  { label: 'Vergi Yok', value: 0 },
+  { label: '1%', value: 1 },
+  { label: '8%', value: 8 },
+  { label: '18%', value: 18 },
+]);
+
+let tax_rate_display_value = computed(() => {
+  return tax_options.value.find((tax) => tax.value === product.value.tax_rate)?.label;
 });
 
 function addEmptyProduct() {
-  product.value.variant.price = props.price;
-  emit("add", product.value);
+  product.value.price = Number(props.price);
+  emit('add', product.value);
 }
 </script>
