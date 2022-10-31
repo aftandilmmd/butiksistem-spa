@@ -9,6 +9,7 @@ import {
   getVariantId,
   getVariantMetaAmount,
   getVariantMetaDiscountType,
+  getVariantMetaHashId,
   getVariantMetaTransactionType,
   getVariantPrice,
   getVariantQuantity
@@ -168,9 +169,9 @@ function getCartItemUpdatedTotalPrice(item: CartItemInterface): number {
 
 function ifItemExistsInCart(items: CartItemInterface[], item: CartItemInterface): number {
 
-  const variant_id: number = getVariantId(getProductFirstVariant(item));
+  const variant_hash_id = getVariantMetaHashId(getProductFirstVariant(item));
 
-  return items.findIndex((cart_item: CartItemInterface) => getVariantId(getProductFirstVariant(cart_item)) === variant_id);
+  return items.findIndex((cart_item: CartItemInterface) => getVariantMetaHashId(getProductFirstVariant(cart_item)) === variant_hash_id);
 
 }
 
