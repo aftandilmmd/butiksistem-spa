@@ -1,9 +1,14 @@
+import { CartInterface, CustomerInterface, AddressInterface, CartTaxRateInterface, CartTransactionInterface, ProductInterface, VariantInterface } from 'src/core/types/model.d';
+import { CartItemType } from 'src/core/types/cart-type.d';
+
+import { groupBy, NumericDictionary, sum } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+import { calculateTax } from 'src/utils/Money';
 import { useParkStore } from 'src/stores/terminal/park-store';
 import { useCartStore } from 'src/stores/terminal/cart-store';
-import { CartItemInterface, CartInterface, CustomerInterface, AddressInterface, CartTaxRateInterface, CartTransactionInterface } from 'src/core/types/model.d';
-import { sum } from 'lodash';
 import CartItem from '../models/CartItem';
-import CartModel from '../models/CartModel';
+import Product from '../models/Product';
+import Variant from '../models/Variant';
 import { usePark } from './usePark';
 
 export function useCart(store: CartInterface = useCartStore()){
@@ -35,32 +40,72 @@ export function useCart(store: CartInterface = useCartStore()){
     ParkManager.addPark(getCurrentCart());
   }
 
-  function item(item: CartItemInterface) {
+  function item(item: CartItemType) {
     return CartItem(item);
   }
 
-  function addItem(item: CartItemInterface): void {
-    store.items.push(item)
+  function addItem(product: ProductInterface, variant: VariantInterface, quantity = 1): void {
+
+    const cart_item = getItemByVariant(variant)
+
+    if(cart_item){
+      incItemQuantity(cart_item)
+      return;
+    }
+
+    const item: CartItemType = {
+      type: 'cart_items',
+      id: uuidv4(),
+      attributes: {
+        quantity: quantity,
+        product: {
+          id: Product(product).getId(),
+          name: Product(product).getName(),
+          price: Product(product).getPrice(),
+          tax_rate: Product(product).getTaxRate(),
+        },
+        variant: {
+          id: Variant(variant).getId(),
+          name: Variant(variant).getName(),
+          price: Variant(variant).getPrice( Product(product).getPrice() ),
+        }
+      },
+      meta: {
+        pricing:{
+            pricing_type: 'discount',
+            discount_type: 'percent',
+            amount: null
+        },
+        note: ''
+      }
+    }
+
+    store.items.push( item )
   }
 
-  function removeItem(id: number): void {
+  function removeItem(id: string): void {
       store.items = store.items.filter( item => item.id !== id)
   }
 
-  function updateItem(id: number, item: CartItemInterface): void {
+  function updateItem(id: string, item: CartItemType): void {
       const item_index = store.items.findIndex( item => item.id === id)
       store.items[item_index] = item;
   }
 
-  function getItemById(id: number): CartItemInterface | undefined {
+  function incItemQuantity(item: CartItemType, add_quantity = 1): void {
+    item.attributes.quantity = item.attributes.quantity + add_quantity;
+    store.items[getItemIndexById(item.id)] = item;
+  }
+
+  function getItemById(id: string): CartItemType | undefined {
     return store.items.find( item => item.id === id);
   }
 
-  function getItems(): CartItemInterface[] {
+  function getItems(): CartItemType[] {
     return store.items;
   }
 
-  function setItems(items: CartItemInterface[]): void {
+  function setItems(items: CartItemType[]): void {
     store.items = items;
   }
 
@@ -111,7 +156,33 @@ export function useCart(store: CartInterface = useCartStore()){
   }
 
   function getTaxPrices(): CartTaxRateInterface[] {
-    return CartModel(store.items).getTaxPrices();
+    const grouped_items: NumericDictionary<CartItemType[]> = groupBy(store.items, item => CartItem(item).getTaxRate())
+
+      const response: CartTaxRateInterface[] = [];
+
+      Object.keys(grouped_items).forEach(tax_rate => {
+
+        const tax_items = grouped_items[Number(tax_rate)];
+        const total_price = sum(tax_items.map(item => CartItem(item).getUpdatedTotalPrice()));
+        response.push(calculateTax(total_price, Number(tax_rate)))
+
+      });
+
+      return response;
+  }
+
+  function getItemIndexById(id: string): number{
+    return store.items.findIndex((cart_item: CartItemType) => CartItem(cart_item).getId() === id);
+  }
+
+  function getItemIndexByVariant(variant: VariantInterface): number{
+    const variant_id = Variant(variant).getId();
+    return store.items.findIndex((cart_item: CartItemType) => CartItem(cart_item).getVariant().id === variant_id);
+  }
+
+  function getItemByVariant(variant: VariantInterface): CartItemType | undefined{
+    const item_index = getItemIndexByVariant(variant);
+    return store.items[item_index]
   }
 
   function createOrder() {
@@ -148,6 +219,10 @@ export function useCart(store: CartInterface = useCartStore()){
     getCurrentCart,
     setCurrentCart,
     parkCurrentCart,
+    getItemIndexById,
+    getItemIndexByVariant,
+    getItemByVariant,
+    incItemQuantity,
   }
 
 }
