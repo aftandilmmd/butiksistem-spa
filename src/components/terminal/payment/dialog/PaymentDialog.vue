@@ -1,9 +1,7 @@
 <template>
   <div class="flex flex-col bg-white">
     <div class="flex flex-col">
-      <header
-        class="h-20 flex flex-row border-0 border-b border-solid border-gray-200"
-      >
+      <header class="h-20 flex flex-row border-0 border-b border-solid border-gray-200">
         <q-btn
           v-close-popup
           icon="arrow_back"
@@ -25,12 +23,10 @@
     </div>
 
     <div class="flex-1 grid grid-cols-4">
-      <div
-        class="p-12 col-span-3 flex flex-col items-center border-0 border-r border-solid border-gray-200"
-      >
-        <template v-if="isPaymentCompleted">
+      <div class="p-12 col-span-3 flex flex-col items-center border-0 border-r border-solid border-gray-200">
+        <template v-if="is_completed">
           <div class="w-full flex-1 flex flex-col flex-center">
-            <span v-if="isOverPaid" class="text-3xl mb-10">
+            <span v-if="is_over_paid" class="text-3xl mb-10">
               <strong class="font-semibold">
                 {{ Money(-1 * cartStore.getTransactionsRemainingAmount) }}
               </strong>
@@ -78,9 +74,9 @@
           <div class="my-auto">
             <div class="flex flex-row justify-center gap-6">
               <q-btn
-                @click="setAmountType('all')"
+                @click="setAmountType('remaining')"
                 :class="`${
-                  amountType == 'all'
+                  amountType == 'remaining'
                     ? 'bg-gray-500 text-white'
                     : 'bg-gray-100 text-gray-600'
                 }`"
@@ -91,9 +87,9 @@
               />
 
               <q-btn
-                @click="setAmountType('custom')"
+                @click="setAmountType('partial')"
                 :class="`${
-                  amountType == 'custom'
+                  amountType == 'partial'
                     ? 'bg-gray-500 text-white'
                     : 'bg-gray-100 text-gray-600'
                 }`"
@@ -104,10 +100,8 @@
               />
             </div>
 
-            <div v-if="amountType == 'custom'" class="flex mt-8">
-              <div
-                class="w-6/12 mx-auto inline-flex flex-row items-center border-0 border-b border-solid border-gray-400 text-6xl"
-              >
+            <div v-if="amountType == 'partial'" class="flex mt-8">
+              <div class="w-6/12 mx-auto inline-flex flex-row items-center border-0 border-b border-solid border-gray-400 text-6xl">
                 <q-icon name="currency_lira"></q-icon>
                 <input
                   @keyup.enter="addTransaction"
@@ -134,39 +128,26 @@
       </div>
 
       <div class="col-span-1 flex flex-col">
-        <div
-          class="flex flex-col items-end text-gray-900 p-5 py-12 border-0 border-b border-solid border-gray-200"
-        >
+        <div class="flex flex-col items-end text-gray-900 p-5 py-12 border-0 border-b border-solid border-gray-200">
           <span class="text-xl mb-1">Ödenecek Tutar</span>
           <span class="text-5xl">{{ Money(cartStore.getTotalPrice) }}</span>
         </div>
 
         <div class="relative flex flex-1">
-          <q-scroll-area class="w-full">
+          <q-scroll-area ref="transactionScroll" class="w-full">
             <div class="bg-white overflow-hidden">
-              <TransitionGroup
-                name="list"
-                tag="ul"
-                class="p-0 m-0 list-none divide-y divide-gray-200"
-              >
-                <li
-                  v-for="transaction in cartStore.transactions"
-                  :key="transaction.hash_id"
-                >
-                  <div
-                    class="group relative flex justify-between items-center p-5 hover:bg-gray-50 border-0 border-solid border-b border-gray-200"
-                  >
+              <TransitionGroup name="list" tag="ul" class="p-0 m-0 list-none divide-y divide-gray-200">
+                <li v-for="transaction in cartStore.transactions" :key="transaction.hash_id">
+                  <div class="group relative flex justify-between items-center p-5 hover:bg-gray-50 border-0 border-solid border-b border-gray-200">
                     <span class="text-xl font-light flex items-center">
-                      {{ getPaymentType(transaction) }}
+                      {{ transaction.paymentType == 'cash' ? 'Nakit' : 'Kredi Kartı' }}
                     </span>
 
                     <span class="text-xl font-medium text-green-500">
                       {{ Money(transaction.amount) }}
                     </span>
 
-                    <div
-                      class="hidden group-hover:flex bg-gray-100/50 absolute left-0 right-0 top-0 bottom-0 flex-center"
-                    >
+                    <div class="hidden group-hover:flex bg-gray-100/50 absolute left-0 right-0 top-0 bottom-0 flex-center">
                       <q-btn
                         @click="cancelTransaction(transaction.hash_id)"
                         label="İptal Et"
@@ -175,26 +156,15 @@
                     </div>
                   </div>
                 </li>
-
-                <transition name="fade-out" mode="out-in">
-                  <li :key="cartStore.transactions.length">
-                    <div
-                      class="flex justify-between items-center p-5 hover:bg-gray-50 border-0 border-solid border-b border-gray-200"
-                    >
-                      <span class="text-xl font-medium flex items-center">
-                        Kalan Tutar
-                      </span>
-                      <span class="text-xl font-medium">
-                        {{
-                          cartStore.getTransactionsRemainingAmount < 0
-                            ? Money(0)
-                            : Money(cartStore.getTransactionsRemainingAmount)
-                        }}
-                      </span>
-                    </div>
-                  </li>
-                </transition>
               </TransitionGroup>
+              <div class="flex justify-between items-center p-5 hover:bg-gray-50 border-0 border-solid border-b border-gray-200">
+                <span class="text-xl font-medium flex items-center">
+                  Kalan Tutar
+                </span>
+                <span class="text-xl font-medium">
+                  {{ cartStore.getTransactionsRemainingAmount < 0 ? Money(0) : Money(cartStore.getTransactionsRemainingAmount)}}
+                </span>
+              </div>
             </div>
           </q-scroll-area>
         </div>
@@ -202,68 +172,76 @@
     </div>
   </div>
 
-  <q-dialog maximized v-model="successDialog">
+  <q-dialog maximized v-model="dialogs.payment_complete">
     <payment-success-dialog @restart="restart" />
   </q-dialog>
 </template>
 
-<script>
-import PaymentSuccessDialog from "src/components/terminal/payment/dialog/PaymentSuccessDialog.vue";
-</script>
+<script setup lang="ts">
+import PaymentSuccessDialog from 'src/components/terminal/payment/dialog/PaymentSuccessDialog.vue';
 
-<script setup>
-import { ref, computed, watch } from "vue";
-import { Money } from "src/utils/Money";
-import { useCartStore } from "src/stores/terminal/cart-store";
-import { useQuasar } from "quasar";
+import { ref, computed, watch, reactive } from 'vue';
+import { Money } from 'src/utils/Money';
+import { useCartStore } from 'src/stores/terminal/cart-store';
+import { useQuasar } from 'quasar';
+import { v4 as uuidv4 } from 'uuid';
+import { PaymentType } from 'src/core/types/model';
 
-let paymentType = ref("cash");
-let amountType = ref(null);
-let amount = ref("0.00");
-let amountInputRef = ref(null);
-let successDialog = ref(false);
+type AmountType = 'remaining' | 'partial';
+
+let paymentType = ref<PaymentType>('cash');
+let amountType = ref<AmountType>('remaining');
+let amount = ref(0);
+let amountInputRef = ref<HTMLInputElement>();
+let transactionScroll = ref();
+let dialogs = reactive({
+  payment_complete: false
+});
 
 let cartStore = useCartStore();
 const $q = useQuasar();
 
-const emit = defineEmits(["complete"]);
+const emit = defineEmits(['complete']);
+
+let is_over_paid = computed(() => cartStore.getTransactionsRemainingAmount < 0);
+let is_completed = computed(() => cartStore.getTransactionsRemainingAmount <= 0);
 
 watch(amountType, () => {
-  if (amountType.value == "custom") {
-    amount.value = "0.00";
+  if (amountType.value == 'partial') {
+    amount.value = 0;
     focusInput();
   } else {
     amount.value = cartStore.getTransactionsRemainingAmount;
   }
 });
 
-function setPaymentType(type) {
+
+function setPaymentType(type: PaymentType) {
   paymentType.value = type;
 }
 
-function setAmountType(type) {
+function setAmountType(type: AmountType) {
   amountType.value = type;
-}
-
-function getPaymentType(transaction) {
-  return transaction.paymentType == "cash" ? "Nakit" : "Kredi Kartı";
 }
 
 function addTransaction() {
   cartStore.addTransaction({
+    hash_id: uuidv4(),
     paymentType: paymentType.value,
     amount: amount.value,
   });
 
-  amount.value = "0.00";
+  amount.value = 0;
+
+  transactionScroll.value.setScrollPosition('vertical', 10000, 400)
 
   focusInput();
 }
 
-function cancelTransaction(hash_id) {
+function cancelTransaction(hash_id: string) {
   $q.dialog({
-    title: "Uyarı",
-    message: "Ödemeyi iptal etmek istediğinize emin misiniz?",
+    title: 'Uyarı',
+    message: 'Ödemeyi iptal etmek istediğinize emin misiniz?',
     cancel: true,
     persistent: true,
   }).onOk(() => {
@@ -272,11 +250,11 @@ function cancelTransaction(hash_id) {
 }
 
 let isPaymentReady = computed(() => {
-  return amount.value != "0.00";
+  return amount.value !== 0;
 });
 
 function completePayment() {
-  successDialog.value = true;
+  dialogs.payment_complete = true;
 }
 
 function focusInput() {
@@ -286,10 +264,7 @@ function focusInput() {
   }, 50);
 }
 
-let isOverPaid = computed(() => cartStore.getTransactionsRemainingAmount < 0);
-let isPaymentCompleted = computed(() => cartStore.getTransactionsRemainingAmount <= 0);
-
 function restart() {
-  emit("complete");
+  emit('complete');
 }
 </script>
