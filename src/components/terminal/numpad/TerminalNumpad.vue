@@ -1,10 +1,6 @@
 <template>
-  <div
-    class="w-7/12 flex flex-col h-full border border-solid border-gray-300 overflow-hidden rounded-md mx-auto"
-  >
-    <div
-      class="w-full overflow-hidden text-gray-700 bg-gray-200 h-44 flex flex-center text-7xl font-light"
-    >
+  <div class="w-7/12 flex flex-col h-full border border-solid border-gray-300 overflow-hidden rounded-md mx-auto">
+    <div class="w-full overflow-hidden text-gray-700 bg-gray-200 h-44 flex flex-center text-7xl font-light">
       <span>{{ numFormatted }}</span>
     </div>
 
@@ -125,23 +121,24 @@
       />
     </div>
   </div>
+
   <q-dialog v-model="dialogs.empty_product">
     <empty-product-dialog
       :price="price"
-      @add="addEmptyProduct"
+      @add="addProduct"
       class="w-full lg:w-4/12 xl:w-3/12"
     />
   </q-dialog>
 </template>
+<script setup lang="ts">
 
-<script>
 import EmptyProductDialog from 'src/components/terminal/numpad/dialog/EmptyProductDialog.vue';
 import { useCartStore } from 'src/stores/terminal/cart-store';
-</script>
 
-<script setup>
 import { ref, computed, onActivated, reactive } from 'vue';
 import { Money } from 'src/utils/Money';
+import { CartItemInterface } from 'src/core/types/model.d'
+import { v4 as uuidv4 } from 'uuid';
 
 const cart = useCartStore();
 
@@ -180,8 +177,8 @@ function showEmptyProductPanel() {
   dialogs.empty_product = true;
 }
 
-function addEmptyProduct(product) {
-  cart.add(product);
+function addProduct(product) {
+  cart.add(formatProduct(product));
   price.value = '';
 }
 
@@ -196,4 +193,32 @@ function toggleSide() {
 onActivated(() => {
   price.value = '';
 });
+
+function formatProduct(product): CartItemInterface {
+  return {
+    type: 'products',
+    id: -1,
+    attributes:{
+      name: 'Tanımsız ürün',
+      price: Number(price.value),
+      tax_rate: product.tax_rate,
+    },
+    relations:{
+      variants: [
+        {
+          type: 'variants',
+          id: -1,
+          attributes:{
+            name: 'Tanımsız varyant',
+            price: Number(price.value),
+            quantity: 1,
+          },
+          meta:{
+            hash_id: uuidv4()
+          }
+        }
+      ]
+    }
+  }
+}
 </script>
