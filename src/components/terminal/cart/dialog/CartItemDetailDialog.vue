@@ -2,7 +2,7 @@
   <q-card class="flex flex-col">
     <div class="w-full bg-[#002640] p-6">
       <h1 class="m-0 text-xl text-white mx-auto font-normal">
-        {{ Product(item).getName() }}
+        {{ CartItem(item).getName() }}
       </h1>
     </div>
 
@@ -18,7 +18,7 @@
       <div class="w-7/12 mx-auto relative flex flex-col items-center">
 
         <input
-          v-model="variant_form.attributes.quantity"
+          v-model="item_form.attributes.quantity"
           @blur="checkQuantity"
           class="w-full rounded p-3 py-2 text-3xl border-2 border-solid border-gray-300 focus:border-gray-400 text-center"
         />
@@ -46,7 +46,7 @@
             @click="setTransactionType('discount')"
             no-caps
             :class="`${
-              variant_form.meta.transaction_type === 'discount'
+              CartItem(item_form).getTransactionType() === 'discount'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-600'
             }`"
@@ -58,7 +58,7 @@
             @click="setTransactionType('custom')"
             no-caps
             :class="`${
-              variant_form.meta.transaction_type === 'custom'
+              CartItem(item_form).getTransactionType() === 'custom'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-600'
             }`"
@@ -72,14 +72,14 @@
 
       <div class="w-full flex flex-row items-center gap-5">
 
-        <div v-if="variant_form.meta.transaction_type == 'discount'">
+        <div v-if="CartItem(item_form).getTransactionType() == 'discount'">
 
           <q-btn-group unelevated>
 
             <q-btn
               @click="setDiscountType('percent')"
               :class="`text-xs ${
-                variant_form.meta.discount_type == 'percent'
+                CartItem(item_form).getDiscountType() == 'percent'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-600'
               }`"
@@ -90,7 +90,7 @@
             <q-btn
               @click="setDiscountType('fixed')"
               :class="`text-xs ${
-                variant_form.meta.discount_type == 'fixed'
+                CartItem(item_form).getDiscountType() == 'fixed'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-600'
               }`"
@@ -109,14 +109,14 @@
           :error-message="over_discount_message"
           outlined
           type="number"
-          v-model="variant_form.meta.amount"
+          v-model="item_form.meta.pricing.amount"
           class="flex-1 text-right text-xl"
         >
-          <template v-if="variant_form.meta.transaction_type == 'discount'" v-slot:prepend>
+          <template v-if="CartItem(item_form).getTransactionType() == 'discount'" v-slot:prepend>
 
-            <q-icon v-if="variant_form.meta.discount_type == 'percent'" name="percent" />
+            <q-icon v-if="CartItem(item_form).getDiscountType() == 'percent'" name="percent" />
 
-            <q-icon v-if="variant_form.meta.discount_type == 'fixed'" name="currency_lira" />
+            <q-icon v-if="CartItem(item_form).getDiscountType() == 'fixed'" name="currency_lira" />
 
           </template>
 
@@ -149,98 +149,76 @@
 import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCardActions.vue';
 
 import { ref, computed } from 'vue';
-import { CartItemInterface, DiscountType, TransactionType, VariantInterface } from 'src/core/types/model'
+import { DiscountType, TransactionType } from 'src/core/types/model'
 import { cloneDeep } from 'lodash';
-import { useCartStore } from 'src/stores/terminal/cart-store';
 import { Money } from 'src/utils/Money';
 import { positiveNotify } from 'src/utils/Notify';
 
 import CartItem from 'src/core/models/CartItem';
-import Variant from 'src/core/models/Variant';
-import Product from 'src/core/models/Product';
+import { CartItemType } from 'src/core/types/cart-type';
+import { useCart } from 'src/core/composables/useCart';
 
-const props = defineProps<{ item: CartItemInterface }>()
-const emit  = defineEmits<{ (e: 'update', value: CartItemInterface): void }>()
+const CartManager = useCart();
 
-const cartStore    = useCartStore();
-const item_variant = cloneDeep(CartItem(props.item).getVariant());
-let variant_form   = ref<VariantInterface>(item_variant);
+const props = defineProps<{ item: CartItemType }>()
+const emit  = defineEmits<{ (e: 'update', value: CartItemType): void }>()
+
+let item_form = ref<CartItemType>(cloneDeep(props.item));
 
 let amount = computed(() => CartItem(props.item).getAmount() );
 let is_price_updated = computed(() => CartItem(props.item).isPriceUpdated() );
-let is_over_discounted = computed(() => isOverDiscounted() );
+let is_over_discounted = computed(() => CartItem(item_form.value).isOverDiscounted() );
 
 let over_discount_message = 'Uyarı! Ürün fiyatı eksiye düştü.';
 let discount_remove_message = computed(() => {
 
-  if(Variant(variant_form.value).isTransactionCustom()){
+  if(CartItem(item_form.value).getTransactionType() === 'custom'){
     return `${Money(amount.value)} ÖZEL FİYATI KALDIR.`;
   }
 
-  return `${amount.value}${ Variant(variant_form.value).isDiscountFixed() ? '₺' : '%' } İNDİRİMİ KALDIR.`;
+  return `${amount.value}${ CartItem(item_form.value).getDiscountType() === 'fixed' ? '₺' : '%' } İNDİRİMİ KALDIR.`;
 });
 
 function decQuantity(): void {
-  if ( Variant(variant_form.value).getQuantity() > 1){
-    variant_form.value.attributes.quantity--;
+  if ( CartItem(item_form.value).getQuantity() > 1){
+    item_form.value.attributes.quantity--;
   }
 }
 
 function incQuantity(): void {
-  variant_form.value.attributes.quantity++;
+  item_form.value.attributes.quantity++;
 }
 
 function setTransactionType(type: TransactionType): void {
-  variant_form.value.meta.transaction_type = type;
+  item_form.value.meta.pricing.pricing_type = type;
 }
 
 function setDiscountType(type: DiscountType): void {
-  variant_form.value.meta.discount_type = type;
+  item_form.value.meta.pricing.discount_type = type;
 }
 
 function removeDiscount(): void {
-  variant_form.value = CartItem(CartItem(props.item).removeDiscount()).getVariant();
+  item_form.value = CartItem(props.item).removeDiscount();
 }
 
 function update(): void {
 
   if (is_over_discounted.value) return;
 
-  const item = CartItem(cloneDeep(props.item)).setVariant(variant_form.value);
+  CartManager.updateItem(item_form.value.id, item_form.value);
 
-  cartStore.update(item);
-
-  emit('update', item);
+  emit('update', item_form.value);
 
   positiveNotify('Sepet güncellendi.')
 
 }
 
-function isOverDiscounted(): boolean {
-
-  let price = Variant(variant_form.value).getPrice() ?? Product(props.item).getPrice()
-
-  if (Variant(variant_form.value).getTransactionType() === 'custom') {
-    return Variant(variant_form.value).getAmount() < 0;
-  }
-
-  if (Variant(variant_form.value).getDiscountType() === 'percent' && Variant(variant_form.value).getAmount() > 100) {
-    return true;
-  }
-
-  if ( Variant(variant_form.value).getDiscountType() == 'fixed' && Variant(variant_form.value).getAmount() > price ) {
-    return true;
-  }
-
-  return false;
-
-}
-
 function checkQuantity(){
-  let qty = variant_form.value.attributes.quantity;
-  if(qty < 1 || qty > 10000){
-    variant_form.value.attributes.quantity = 1;
+
+  if(item_form.value.attributes.quantity < 1){
+    item_form.value.attributes.quantity = 1;
   }
+
 }
 
 </script>
