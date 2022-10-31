@@ -19,10 +19,6 @@
         {{ variant_name }}
       </span>
 
-      <span v-if="barcode" class="text-gray-500">
-        {{ barcode }}
-      </span>
-
       <span v-if="variant_note" class="text-gray-500">
         {{ variant_note }}
       </span>
@@ -71,7 +67,6 @@ import { computed } from 'vue';
 
 import { Money } from 'src/utils/Money';
 import CartItem from 'src/core/models/CartItem';
-import Product from 'src/core/models/Product';
 
 const emit = defineEmits(['remove', 'show-detail']);
 
@@ -90,10 +85,9 @@ function showDetail() {
   emit('show-detail', props.item);
 }
 
-let product_name          = computed(() => Product(props.item).getName());
+let product_name          = computed(() => CartItem(props.item).getName());
 let variant_name          = computed(() => CartItem(props.item).getVariantName());
 let variant_note          = computed(() => CartItem(props.item).getNote());
-let barcode               = computed(() => CartItem(props.item).getBarcode());
 let quantity              = computed(() => CartItem(props.item).getQuantity());
 let is_price_updated      = computed(() => CartItem(props.item).isPriceUpdated());
 let total_price           = computed(() => Money(CartItem(props.item).getTotalPrice()));
