@@ -1,10 +1,14 @@
+import { useParkStore } from 'src/stores/terminal/park-store';
 import { useCartStore } from 'src/stores/terminal/cart-store';
 import { CartItemInterface, CartInterface, CustomerInterface, AddressInterface, CartTaxRateInterface, CartTransactionInterface } from 'src/core/types/model.d';
 import { sum } from 'lodash';
 import CartItem from '../models/CartItem';
 import CartModel from '../models/CartModel';
+import { usePark } from './usePark';
 
 export function useCart(store: CartInterface = useCartStore()){
+
+  const ParkManager = usePark(useParkStore( ));
 
   function getCurrentCart() {
     return {
@@ -25,6 +29,10 @@ export function useCart(store: CartInterface = useCartStore()){
       billing_address: cart.billing_address,
       transactions: cart.transactions,
     }
+  }
+
+  function parkCurrentCart() {
+    ParkManager.addPark(getCurrentCart());
   }
 
   function item(item: CartItemInterface) {
@@ -139,6 +147,7 @@ export function useCart(store: CartInterface = useCartStore()){
     getTaxPrices,
     getCurrentCart,
     setCurrentCart,
+    parkCurrentCart,
   }
 
 }
