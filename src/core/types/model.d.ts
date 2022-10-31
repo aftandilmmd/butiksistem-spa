@@ -71,7 +71,7 @@ export interface CategoryInterface{
 interface CartTransactionInterface{
   amount: number,
   paymentType: PaymentType,
-  hash_id?: string
+  hash_id: string
 }
 
 interface CartInterface{
@@ -143,4 +143,10 @@ interface VariantModelInterface{
   isTransactionDiscount(): boolean,
   isDiscountFixed(): boolean,
   isDiscountPercent(): boolean,
+}
+
+export interface ParkItemInterface{
+  id   : string,
+  cart: CartInterface,
+  created_at: string,
 }
