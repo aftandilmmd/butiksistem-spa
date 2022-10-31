@@ -7,7 +7,7 @@ import { uniqBy } from 'lodash';
 
 export const useProductStore = defineStore('productStore', {
   state: () => ({
-    products: [],
+    products: useStorage<ProductInterface[]>('products', []),
     favorites: useStorage<ProductInterface[]>('favorites', []),
   }),
 
