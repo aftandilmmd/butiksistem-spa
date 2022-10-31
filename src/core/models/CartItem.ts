@@ -9,6 +9,10 @@ import { v4 as uuidv4 } from 'uuid'
 
 function CartItem(model: ProductInterface){
 
+  function getId(): number {
+    return Product(model).getId()
+  }
+
   function getName(): string {
     return Product(model).getName()
   }
@@ -91,6 +95,10 @@ function CartItem(model: ProductInterface){
     return getVariant().meta?.note;
   }
 
+  function getHash() {
+    return getVariant().meta?.hash_id;
+  }
+
   function isOverDiscounted(): boolean {
 
     if (getTransactionType() === 'custom') {
@@ -134,6 +142,7 @@ function CartItem(model: ProductInterface){
 
   // Return Methods
   return {
+    getId,
     getPrice,
     getVariant,
     getTransactionType,
@@ -152,6 +161,7 @@ function CartItem(model: ProductInterface){
     resetMeta,
     removeDiscount,
     setVariant,
+    getHash,
   }
 
 }
