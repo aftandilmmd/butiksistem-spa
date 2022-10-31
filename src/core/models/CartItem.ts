@@ -1,44 +1,45 @@
+import { CartItemType } from './../types/cart-type.d';
 import { DiscountType } from '../types/model.d';
 import { TransactionType } from '../types/model.d';
 import { VariantInterface } from '../types/model.d';
-import { ProductInterface } from '../types/model.d';
-import Product from './Product';
 import Variant from './Variant';
 
-import { v4 as uuidv4 } from 'uuid'
+function CartItem(model: CartItemType){
 
-function CartItem(model: ProductInterface){
-
-  function getId(): number {
-    return Product(model).getId()
+  function getId(): string {
+    return model.id;
   }
 
   function getName(): string {
-    return Product(model).getName()
+    return model.attributes.product.name;
   }
 
   function getVariantName(): string {
-    return Variant(getVariant()).getName()
+    return model.attributes.variant.name;
   }
 
   function getPrice(): number {
-    return Variant(getVariant()).getPrice() ?? Product(model).getPrice()
+    return model.attributes.variant.price ?? model.attributes.product.price;
   }
 
-  function getVariant(): VariantInterface{
-    return Product(model).getFirstVariant();
+  function getVariant(){
+    return model.attributes.variant;
+  }
+
+  function getTaxRate(){
+    return model.attributes.product.tax_rate;
   }
 
   function getTransactionType(): TransactionType{
-    return Variant( getVariant() ).getTransactionType()
+    return model.meta.pricing.pricing_type;
   }
 
   function getDiscountType(): DiscountType{
-    return Variant( getVariant() ).getDiscountType()
+    return model.meta.pricing.discount_type;
   }
 
-  function getAmount(): number{
-    return Variant( getVariant() ).getAmount()
+  function getAmount(): number | null{
+    return model.meta.pricing.amount;
   }
 
   function getUpdatedPrice() {
@@ -76,7 +77,7 @@ function CartItem(model: ProductInterface){
   }
 
   function getQuantity(): number {
-    return Variant( getVariant() ).getQuantity();
+    return model.attributes.quantity;
   }
 
   function getTotalPrice(): number {
@@ -88,28 +89,29 @@ function CartItem(model: ProductInterface){
   }
 
   function getBarcode() {
-    return Variant(getVariant()).getBarcode()
+    return 'NOT_AVAILABLE';
   }
 
   function getNote() {
-    return getVariant().meta?.note;
+    return model.meta.note;
   }
 
   function getHash() {
-    return getVariant().meta?.hash_id;
+    return model.id;
   }
 
   function isOverDiscounted(): boolean {
+    const amount = getAmount() ?? 0;
 
     if (getTransactionType() === 'custom') {
-      return getAmount() < 0;
+      return amount < 0;
     }
 
-    if (getDiscountType() === 'percent' && getAmount() > 100) {
+    if (getDiscountType() === 'percent' && amount > 100) {
       return true;
     }
 
-    if ( getDiscountType() == 'fixed' && getAmount() > getPrice() ) {
+    if ( getDiscountType() == 'fixed' && amount > getPrice() ) {
       return true;
     }
 
@@ -117,26 +119,21 @@ function CartItem(model: ProductInterface){
 
   }
 
-  function resetMeta() {
-
-    const meta = {
-      hash_id: uuidv4(),
-      transaction_type: <TransactionType>'discount',
-      discount_type: <DiscountType>'percent',
+  function removeDiscount() {
+    model.meta.pricing = {
+      pricing_type: 'discount',
+      discount_type: 'percent',
       amount: null,
     }
-
-    return meta;
-
-  }
-
-  function removeDiscount() {
-    model.relations.variants[0].meta = resetMeta();
     return model;
   }
 
   function setVariant(variant: VariantInterface) {
-    model.relations.variants[0] = variant;
+    model.attributes.variant = {
+      id: Variant(variant).getId(),
+      name: Variant(variant).getName(),
+      price: Variant(variant).getPrice( getPrice() ),
+    }
     return model;
   }
 
@@ -158,10 +155,10 @@ function CartItem(model: ProductInterface){
     getName,
     getVariantName,
     isOverDiscounted,
-    resetMeta,
     removeDiscount,
     setVariant,
     getHash,
+    getTaxRate,
   }
 
 }
