@@ -1,7 +1,7 @@
-import { CartInterface, CartTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRateInterface } from 'src/core/types/model.d';
+import { PricingType } from './../../core/types/cart-type.d';
+import { CartStateInterface, CartTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRateInterface } from 'src/core/types/model.d';
 import { defineStore } from 'pinia';
 import { sumBy } from 'lodash';
-import { useStorage } from '@vueuse/core';
 import CartModel from 'src/core/models/CartModel';
 
 import {
@@ -13,14 +13,14 @@ import {
 
 export const useCartStore = defineStore('cartStore', {
 
-  state(): CartInterface {
+  state(): CartStateInterface {
     return {
-      items: <CartItemInterface[]>[],
+      items: [],
       customer: <CustomerInterface>{},
       shipping_address: <AddressInterface>{},
       billing_address: <AddressInterface>{},
       transactions: <CartTransactionInterface[]>[],
-      discount: {},
+      discount: <PricingType>{},
     }
   },
 
@@ -127,7 +127,7 @@ export const useCartStore = defineStore('cartStore', {
       this.billing_address = <AddressInterface>{}
     },
 
-    restore(cart: CartInterface) {
+    restore(cart: CartStateInterface) {
       this.items = cart.items;
       this.customer = cart.customer;
     },
