@@ -1,4 +1,4 @@
-import { CartInterface, CustomerInterface, AddressInterface, CartTaxRateInterface, CartTransactionInterface, ProductInterface, VariantInterface } from 'src/core/types/model.d';
+import { CartStateInterface, CustomerInterface, AddressInterface, CartTaxRateInterface, CartTransactionInterface, ProductInterface, VariantInterface, ParkItemInterface } from 'src/core/types/model.d';
 import { CartItemType } from 'src/core/types/cart-type.d';
 
 import { groupBy, NumericDictionary, sum } from 'lodash';
@@ -11,7 +11,7 @@ import Product from '../models/Product';
 import Variant from '../models/Variant';
 import { usePark } from './usePark';
 
-export function useCart(store: CartInterface = useCartStore()){
+export function useCart(store: CartStateInterface = useCartStore()){
 
   const ParkManager = usePark(useParkStore( ));
 
@@ -26,7 +26,7 @@ export function useCart(store: CartInterface = useCartStore()){
     }
   }
 
-  function setCurrentCart(cart: CartInterface) {
+  function setCurrentCart(cart: CartStateInterface) {
     return {
       items: cart.items,
       customer: cart.customer,
@@ -36,8 +36,8 @@ export function useCart(store: CartInterface = useCartStore()){
     }
   }
 
-  function parkCurrentCart() {
-    ParkManager.addPark(getCurrentCart());
+  function parkCurrentCart(title = ''): ParkItemInterface {
+    return ParkManager.addPark(title, getCurrentCart());
   }
 
   function item(item: CartItemType) {
