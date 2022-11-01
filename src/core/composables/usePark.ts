@@ -1,4 +1,4 @@
-import { CartInterface, ParkItemInterface } from 'src/core/types/model.d';
+import { CartStateInterface, ParkItemInterface } from 'src/core/types/model.d';
 import { useParkStore } from 'src/stores/terminal/park-store';
 import { useCart } from 'src/core/composables/useCart';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,10 +8,15 @@ const CartManager = useCart();
 
 export function usePark(store = useParkStore()){
 
-  function addPark( cart: CartInterface ) {
+  function addPark(title = '',  cart: CartStateInterface ) {
+    if(title.length === 0){
+      title = dayjs().format('DD-MM-YYYY HH:mm') + ' tarihli park'
+    }
     const id = uuidv4();
-    const park: ParkItemInterface = {  id, cart, created_at: dayjs().unix().toString() };
+    const park: ParkItemInterface = { title, id, cart, created_at: dayjs().unix().toString() };
     store.parks.unshift(park);
+
+    return park;
   }
 
   function removePark(id: string): void{
