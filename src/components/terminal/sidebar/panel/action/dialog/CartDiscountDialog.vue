@@ -1,38 +1,28 @@
 <template>
   <q-card class="flex flex-col w-full xl:w-6/12">
-    <div class="w-full bg-[#002640] p-6" align="center">
-      <h1 class="m-0 text-xl text-white mx-auto font-normal uppercase">
-        SEPET İNDİRİMİ YAP
-      </h1>
-    </div>
 
-    <q-card-section
-      class="px-8 py-16 w-full q-pt-none flex-1 flex flex-center mt-3"
-    >
+    <dialog-card-header>SEPET İNDİRİMİ YAP</dialog-card-header>
+
+    <q-card-section class="px-8 py-16 w-full q-pt-none flex-1 flex flex-center mt-3">
       <div class="relative w-full flex flex-row items-center gap-5">
         <q-input
-          ref="discountInputRef"
+          v-model="pricing.amount"
+          ref="input_ref"
           outlined
           class="flex-1 text-right text-xl"
-          placeholder="İndirim Miktarı"
+          :placeholder="discount_placeholder"
         />
 
         <q-btn-group unelevated class="absolute right-0 mr-2">
           <q-btn
-            :class="`text-xs ${
-              detail.meta.discount_type == 'percent'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-600'
-            }`"
+            @click="setDiscountType('percent')"
+            :class="`text-xs ${ getDiscountButtonClassname('percent') }`"
             padding="0.7rem 1rem"
             icon="percent"
           />
           <q-btn
-            :class="`text-xs ${
-              detail == 'fixed'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-600'
-            }`"
+            @click="setDiscountType('fixed')"
+            :class="`text-xs ${ getDiscountButtonClassname('fixed') }`"
             padding="0.7rem 1rem"
             icon="currency_lira"
           />
@@ -40,42 +30,41 @@
       </div>
     </q-card-section>
 
-    <q-card-actions align="right" class="p-8 py-5 bg-gray-100">
-      <q-btn
-        flat
-        label="İptal"
-        color="grey-7"
-        padding="8px 2rem"
-        v-close-popup
-      />
-      <q-btn
-        unelevated
-        label="Uygula"
-        color="dark"
-        padding="8px 2rem"
-        v-close-popup
-      />
-    </q-card-actions>
+    <dialog-card-actions @confirm="applyDiscount" />
   </q-card>
 </template>
 
-<script setup>
-import { onMounted, ref } from 'vue';
+<script setup lang="ts">
+import { QCard, QCardSection, QInput, QBtnGroup, QBtn } from 'quasar';
+import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCardActions.vue';
+import DialogCardHeader from 'src/components/terminal/_shared/dialog/DialogCardHeader.vue';
+import { PricingType } from 'src/core/types/cart-type';
+import { onMounted, ref, computed } from 'vue';
+import{ DiscountType } from 'src/core/types/model.d'
 
-const discountInputRef = ref(null);
+const input_ref = ref();
 
-const detail = ref({
-  transaction_type: 'discount', // discount, custom
-  variant: {
-    quantity: 1,
-  },
-  meta: {
-    discount_type: 'percent', // percent, fixed
-    amount: 0,
-  },
+const pricing = ref<PricingType>({
+  pricing_type: 'discount',
+  discount_type: 'percent',
+  amount: null
 });
 
 onMounted(() => {
-  setTimeout(() => discountInputRef.value.focus(), 100);
+  setTimeout(() => input_ref.value.focus(), 100);
 });
+
+const discount_placeholder = computed(() => pricing.value.discount_type === 'percent' ? 'Yüzde indirim miktarı' : 'Sabit indirim miktarı')
+
+function setDiscountType(type: DiscountType){
+  pricing.value.discount_type = type;
+}
+
+function getDiscountButtonClassname(type: DiscountType){
+  return pricing.value.discount_type === type ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600';
+}
+
+function applyDiscount(){
+  //
+}
 </script>
