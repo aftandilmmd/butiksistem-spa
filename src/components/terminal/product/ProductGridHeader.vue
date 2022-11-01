@@ -1,6 +1,15 @@
 <template>
   <div class="flex items-center px-6">
-    <h1 class="text-2xl mr-auto">Favoriler</h1>
+    <h1 class="text-2xl mr-auto">
+
+      <template v-if="filter_value?.url === 'favorites' || filter_value?.url === 'all'">
+        <q-icon v-if="filter_value?.url === 'favorites'" name="bookmark_border"></q-icon>
+        <q-icon v-if="filter_value?.url === 'all'" name="apps"></q-icon>
+      </template>
+
+      <q-icon v-else name="collections_bookmark"></q-icon>
+      {{ filter_value?.name }}
+    </h1>
 
     <span class="mr-4 text-gray-600">Gösterim:</span>
     <q-btn-group unelevated>
@@ -49,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 
 const gridColCount = ref(5);
 
@@ -59,4 +68,7 @@ function setGridColCount(count: number) {
   gridColCount.value = count;
   emit('set-grid-count', count);
 }
+
+const filter_value = inject<{id: number, url: string, name: string}>('category_filter_value');
+
 </script>
