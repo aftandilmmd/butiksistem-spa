@@ -1,6 +1,6 @@
 import { Dialog } from 'quasar';
 
-function confirmDialog({ title = 'Uyarı', message = 'Devam istediğinize emin misiniz?', confirm_label = 'Tamam', persistent = false} =  {}): Promise<void> {
+function confirmDialog({ title = 'Uyarı', message = 'Devam istediğinize emin misiniz?', confirm_label = 'Tamam', persistent = false, html = false} =  {}): Promise<void> {
 
   return new Promise((resolve, reject): void => {
 
@@ -8,6 +8,7 @@ function confirmDialog({ title = 'Uyarı', message = 'Devam istediğinize emin m
       title,
       message,
       persistent,
+      html,
       cancel: {
         flat: true,
         label: 'İptal',
