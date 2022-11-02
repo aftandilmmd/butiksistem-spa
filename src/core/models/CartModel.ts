@@ -1,12 +1,13 @@
-import { CartItemInterface, CartTaxRateInterface } from '../types/model';
+import { ProductInterface } from 'src/core/types/model';
+import { CartTaxRateInterface } from 'src/core/types/cart-types';
 import Product from './Product';
 import { Dictionary, groupBy, NumericDictionary, sum } from 'lodash';
 import CartItem from './CartItem';
 import { calculateTax } from 'src/utils/Money';
 
-function CartModel(items: CartItemInterface[]){
+function CartModel(items: ProductInterface[]){
 
-  function groupItemsByTaxRate(): Dictionary<CartItemInterface[]> {
+  function groupItemsByTaxRate(): Dictionary<ProductInterface[]> {
     return groupBy(items, item => Product(item).getTaxRate())
   }
 
@@ -20,7 +21,7 @@ function CartModel(items: CartItemInterface[]){
 
   function getTaxPrices(): CartTaxRateInterface[] {
 
-    const grouped_items: NumericDictionary<CartItemInterface[]> = groupItemsByTaxRate()
+    const grouped_items: NumericDictionary<ProductInterface[]> = groupItemsByTaxRate()
 
     const response: CartTaxRateInterface[] = [];
 
@@ -39,13 +40,13 @@ function CartModel(items: CartItemInterface[]){
     return items.reduce((total, item) => (total += CartItem(item).getQuantity()), 0)
   }
 
-  function exists(item: CartItemInterface){
-    return items.findIndex((cart_item: CartItemInterface) => {
+  function exists(item: ProductInterface){
+    return items.findIndex((cart_item: ProductInterface) => {
       return CartItem(cart_item).getHash() === CartItem(item).getHash() || CartItem(cart_item).getId() === CartItem(item).getId()
     }) > -1;
   }
 
-  function incQuantityIfExists(item: CartItemInterface){
+  function incQuantityIfExists(item: ProductInterface){
 
     if( exists(item) ){
 

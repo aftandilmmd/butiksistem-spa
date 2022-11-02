@@ -38,7 +38,7 @@
 import { QCard, QCardSection, QInput, QBtnGroup, QBtn } from 'quasar';
 import DialogCardActions from 'src/components/terminal/_shared/dialog/DialogCardActions.vue';
 import DialogCardHeader from 'src/components/terminal/_shared/dialog/DialogCardHeader.vue';
-import { PricingType } from 'src/core/types/cart-type';
+import { PricingType } from 'src/core/types/cart-types';
 import { onMounted, ref, computed } from 'vue';
 import{ DiscountType } from 'src/core/types/model.d'
 

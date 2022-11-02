@@ -1,4 +1,5 @@
-import { CartStateInterface, ParkItemInterface } from 'src/core/types/model.d';
+import { ParkItemInterface } from 'src/core/types/model';
+import { CartStateInterface } from 'src/core/types/cart-types';
 import { useParkStore } from 'src/stores/terminal/park-store';
 import { useCart } from 'src/core/composables/useCart';
 import { v4 as uuidv4 } from 'uuid';

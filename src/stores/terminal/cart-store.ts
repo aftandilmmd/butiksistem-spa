@@ -1,5 +1,5 @@
-import { PricingType } from './../../core/types/cart-type.d';
-import { CartStateInterface, CartTransactionInterface, CartItemInterface, AddressInterface, CustomerInterface, CartTaxRateInterface } from 'src/core/types/model.d';
+import { ProductInterface } from 'src/core/types/model';
+import { PricingType, CartTaxRateInterface, AddressInterface, CustomerInterface, CartStateInterface, CartTransactionInterface, } from 'src/core/types/cart-types';
 import { defineStore } from 'pinia';
 import { sumBy } from 'lodash';
 import CartModel from 'src/core/models/CartModel';
@@ -9,7 +9,6 @@ import {
   filterCartByItemHashId,
   removeCartItemDiscount,
 } from 'src/resources/Cart';
-
 
 export const useCartStore = defineStore('cartStore', {
 
@@ -54,22 +53,9 @@ export const useCartStore = defineStore('cartStore', {
 
     },
 
-    parkState: (state) => ({
-      items: state.items,
-      customer: state.customer,
-    }),
-
     hasItems: (state): boolean => state.items.length > 0,
 
-    hasCustomer(): boolean {
-      return !!this.getCustomerFullName.trim()
-    },
-
     getItemsCount: (state): number => state.items.length,
-
-    getVariantsCount(state): number {
-      return CartModel(state.items).getVariantsCount();
-    },
 
     getTotalPrice: (state): number => {
       // return CartModel(state.items).getTotalPrice();
@@ -96,7 +82,7 @@ export const useCartStore = defineStore('cartStore', {
 
   actions: {
 
-    add(item: CartItemInterface): void {
+    add(item: ProductInterface): void {
 
       if( CartModel(this.items).exists(item) ) {
         CartModel(this.items).incQuantityIfExists(item)
@@ -110,7 +96,7 @@ export const useCartStore = defineStore('cartStore', {
       this.items = filterCartByItemHashId(this.items, hash_id);
     },
 
-    update(item: CartItemInterface): void {
+    update(item: ProductInterface): void {
 
       try {
         const index = ifItemExistsInCart(this.items, item);
@@ -120,7 +106,7 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     reset(): void {
-      this.items = <CartItemInterface[]>[];
+      this.items = <ProductInterface[]>[];
       this.transactions = <CartTransactionInterface[]>[];
       this.customer = <CustomerInterface>{}
       this.shipping_address = <AddressInterface>{}
@@ -136,7 +122,7 @@ export const useCartStore = defineStore('cartStore', {
       this.customer = customer;
     },
 
-    removeItemDiscount(item: CartItemInterface) {
+    removeItemDiscount(item: ProductInterface) {
 
       try {
         const index = ifItemExistsInCart(this.items, item);
@@ -145,7 +131,7 @@ export const useCartStore = defineStore('cartStore', {
 
     },
 
-    removeCartDiscount(item: CartItemInterface) {
+    removeCartDiscount(item: ProductInterface) {
 
       try {
         const index = ifItemExistsInCart(this.items, item);

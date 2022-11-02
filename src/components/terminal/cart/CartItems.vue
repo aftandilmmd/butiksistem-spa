@@ -30,7 +30,7 @@ import CartItemDetailDialog from 'src/components/terminal/cart/dialog/CartItemDe
 import { ref, reactive } from 'vue';
 import { confirmDialog } from 'src/utils/DialogHelper';
 import { useCartStore } from 'src/stores/terminal/cart-store';
-import { CartItemType } from 'src/core/types/cart-type';
+import { CartItemType } from 'src/core/types/cart-types';
 import { useCart } from 'src/core/composables/useCart';
 
 const CartManager = useCart();

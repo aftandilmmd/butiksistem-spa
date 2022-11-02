@@ -1,4 +1,4 @@
-import { VariantInterface, CartItemInterface, DiscountType } from 'src/core/types/model.d';
+import { VariantInterface, ProductInterface, DiscountType } from 'src/core/types/model.d';
 import { v4 as uuidv4 } from 'uuid';
 import { sum, groupBy, Dictionary } from 'lodash';
 
@@ -6,7 +6,6 @@ import {
   getProductFirstVariant,
   getProductPrice,
   getProductTaxRate,
-  getVariantId,
   getVariantMetaAmount,
   getVariantMetaDiscountType,
   getVariantMetaHashId,
@@ -16,29 +15,29 @@ import {
 } from 'src/resources/Product';
 
 // Variant Attribute Getters
-function getCartItemVariantName(cart_item: CartItemInterface) {
+function getCartItemVariantName(cart_item: ProductInterface) {
   return getProductFirstVariant(cart_item)?.attributes?.name;
 }
 
-function getCartItemVariantPrice(cart_item: CartItemInterface) {
+function getCartItemVariantPrice(cart_item: ProductInterface) {
   return getProductFirstVariant(cart_item)?.attributes?.price;
 }
 
-function getCartItemVariantQuantity(cart_item: CartItemInterface) {
+function getCartItemVariantQuantity(cart_item: ProductInterface) {
   return getProductFirstVariant(cart_item)?.attributes?.quantity;
 }
 
-function getCartItemVariantNote(cart_item: CartItemInterface) {
+function getCartItemVariantNote(cart_item: ProductInterface) {
   return getProductFirstVariant(cart_item)?.meta?.note;
 }
 
-function getCartItemVariantStockCode(cart_item: CartItemInterface): number | undefined {
+function getCartItemVariantStockCode(cart_item: ProductInterface): number | undefined {
   return getProductFirstVariant(cart_item)?.attributes?.barcode;
 }
 
 
 // Variant Attribute Setters
-function setCartItemVariantMeta(cart_item: CartItemInterface): CartItemInterface {
+function setCartItemVariantMeta(cart_item: ProductInterface): ProductInterface {
 
   const variant: VariantInterface = getProductFirstVariant(cart_item);
 
@@ -53,7 +52,7 @@ function setCartItemVariantMeta(cart_item: CartItemInterface): CartItemInterface
 
 }
 
-function resetCartItemVariantDiscount(cart_item: CartItemInterface): CartItemInterface {
+function resetCartItemVariantDiscount(cart_item: ProductInterface): ProductInterface {
 
   setCartItemVariantMeta(cart_item);
 
@@ -61,7 +60,7 @@ function resetCartItemVariantDiscount(cart_item: CartItemInterface): CartItemInt
 
 }
 
-function removeCartItemDiscount(cart_item: CartItemInterface): CartItemInterface {
+function removeCartItemDiscount(cart_item: ProductInterface): ProductInterface {
 
   setCartItemVariantMeta(cart_item);
 
@@ -69,7 +68,7 @@ function removeCartItemDiscount(cart_item: CartItemInterface): CartItemInterface
 
 }
 
-function setCartItemVariant(cart_item: CartItemInterface, variant: VariantInterface): CartItemInterface {
+function setCartItemVariant(cart_item: ProductInterface, variant: VariantInterface): ProductInterface {
   cart_item.relations.variants[0] = variant
   return cart_item;
 }
@@ -79,7 +78,7 @@ function setCartItemVariantQuantity(variant: VariantInterface, quantity: number)
   return variant;
 }
 
-function incrementCartItemQuantity(cart_item: CartItemInterface, quantity = 1): CartItemInterface {
+function incrementCartItemQuantity(cart_item: ProductInterface, quantity = 1): ProductInterface {
 
   incrementCartItemVariantQuantity(
     getProductFirstVariant(cart_item),
@@ -102,7 +101,7 @@ function incrementCartItemVariantQuantity(variant: VariantInterface, quantity = 
 
 }
 
-function filterCartByItemHashId(cart_items: CartItemInterface[], cart_item_hash_id: string): CartItemInterface[] {
+function filterCartByItemHashId(cart_items: ProductInterface[], cart_item_hash_id: string): ProductInterface[] {
 
   return cart_items.filter(item => getCartItemVariantMetaHashId(item) !== cart_item_hash_id)
 
@@ -110,27 +109,27 @@ function filterCartByItemHashId(cart_items: CartItemInterface[], cart_item_hash_
 
 
 // Variant Meta
-function getCartItemVariantMetaTransactionType(item: CartItemInterface) {
+function getCartItemVariantMetaTransactionType(item: ProductInterface) {
   return getProductFirstVariant(item)?.meta?.transaction_type;
 }
 
-function getCartItemVariantMetaDiscountType(item: CartItemInterface): DiscountType {
+function getCartItemVariantMetaDiscountType(item: ProductInterface): DiscountType {
   return getProductFirstVariant(item)?.meta?.discount_type;
 }
 
-function getCartItemVariantMetaAmount(item: CartItemInterface): number {
+function getCartItemVariantMetaAmount(item: ProductInterface): number {
   return getProductFirstVariant(item)?.meta?.amount;
 }
 
-function getCartItemVariantMetaHashId(item: CartItemInterface) {
+function getCartItemVariantMetaHashId(item: ProductInterface) {
   return getProductFirstVariant(item)?.meta?.hash_id;
 }
 
-function getCartItemPrice(item: CartItemInterface): number {
+function getCartItemPrice(item: ProductInterface): number {
   return item?.attributes?.price;
 }
 
-function getCartItemCalculatedPrice(item: CartItemInterface) {
+function getCartItemCalculatedPrice(item: ProductInterface) {
   const transaction_type = getCartItemVariantMetaTransactionType(item);
   const discountType = getCartItemVariantMetaDiscountType(item);
   const amount = getCartItemVariantMetaAmount(item);
@@ -155,27 +154,27 @@ function getCartItemCalculatedPrice(item: CartItemInterface) {
   return price;
 }
 
-function isCartItemPriceUpdated(item: CartItemInterface): boolean {
+function isCartItemPriceUpdated(item: ProductInterface): boolean {
   return getCartItemCalculatedPrice(item) !== getCartItemVariantPrice(item)
 }
 
-function getCartItemTotalPrice(item: CartItemInterface): number {
+function getCartItemTotalPrice(item: ProductInterface): number {
   return getCartItemVariantQuantity(item) * getCartItemPrice(item)
 }
 
-function getCartItemUpdatedTotalPrice(item: CartItemInterface): number {
+function getCartItemUpdatedTotalPrice(item: ProductInterface): number {
   return getCartItemVariantQuantity(item) * getCartItemCalculatedPrice(item)
 }
 
-function ifItemExistsInCart(items: CartItemInterface[], item: CartItemInterface): number {
+function ifItemExistsInCart(items: ProductInterface[], item: ProductInterface): number {
 
   const variant_hash_id = getVariantMetaHashId(getProductFirstVariant(item));
 
-  return items.findIndex((cart_item: CartItemInterface) => getVariantMetaHashId(getProductFirstVariant(cart_item)) === variant_hash_id);
+  return items.findIndex((cart_item: ProductInterface) => getVariantMetaHashId(getProductFirstVariant(cart_item)) === variant_hash_id);
 
 }
 
-function isCartItemVariantOverDiscounted(cart_item: CartItemInterface, variant: VariantInterface): boolean {
+function isCartItemVariantOverDiscounted(cart_item: ProductInterface, variant: VariantInterface): boolean {
 
   // If new price is negative
   if (getVariantMetaTransactionType(variant) === 'custom') {
@@ -198,19 +197,19 @@ function isCartItemVariantOverDiscounted(cart_item: CartItemInterface, variant: 
   return false;
 }
 
-function getCartTotalPrice(items: CartItemInterface[]) {
+function getCartTotalPrice(items: ProductInterface[]) {
   return sum(items.map(item => getCartItemUpdatedTotalPrice(item)));
 }
 
-function getCartTotalVariantsCount(items: CartItemInterface[]) {
+function getCartTotalVariantsCount(items: ProductInterface[]) {
   return items.reduce((total, item) => (total += getCartItemVariantQuantity(item)), 0)
 }
 
-function filterCartItemsByTaxRate(items: CartItemInterface[], tax_rate = 18) {
+function filterCartItemsByTaxRate(items: ProductInterface[], tax_rate = 18) {
   return items.filter(item => item?.attributes?.tax_rate === tax_rate)
 }
 
-function groupCartItemsByTaxRate(items: CartItemInterface[]): Dictionary<CartItemInterface[]> {
+function groupCartItemsByTaxRate(items: ProductInterface[]): Dictionary<ProductInterface[]> {
   return groupBy(items, item => getProductTaxRate(item))
 }
 

@@ -155,7 +155,7 @@ import { Money } from 'src/utils/Money';
 import { positiveNotify } from 'src/utils/Notify';
 
 import CartItem from 'src/core/models/CartItem';
-import { CartItemType } from 'src/core/types/cart-type';
+import { CartItemType } from 'src/core/types/cart-types';
 import { useCart } from 'src/core/composables/useCart';
 
 const CartManager = useCart();

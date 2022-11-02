@@ -1,6 +1,5 @@
-import { PaymentType } from 'src/core/types/model.d';
-import { CartStateInterface, CustomerInterface, AddressInterface, CartTaxRateInterface, CartTransactionInterface, ProductInterface, VariantInterface, ParkItemInterface } from 'src/core/types/model.d';
-import { CartItemType } from 'src/core/types/cart-type.d';
+import { ProductInterface, VariantInterface, ParkItemInterface } from 'src/core/types/model';
+import { PaymentType, CartItemType, CartTaxRateInterface, CartStateInterface, CustomerInterface, AddressInterface, CartTransactionInterface, } from 'src/core/types/cart-types';
 
 import { groupBy, NumericDictionary, sum, sumBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';

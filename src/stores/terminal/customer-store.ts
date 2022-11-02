@@ -1,4 +1,4 @@
-import { CustomerInterface } from 'src/core/types/model.d';
+import { CustomerInterface } from 'src/core/types/cart-types';
 import { defineStore } from 'pinia';
 
 export const useCustomerStore = defineStore('customerStore', {

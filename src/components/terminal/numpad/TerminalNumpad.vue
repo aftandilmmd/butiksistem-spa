@@ -137,7 +137,7 @@ import { useCartStore } from 'src/stores/terminal/cart-store';
 
 import { ref, computed, onActivated, reactive } from 'vue';
 import { Money } from 'src/utils/Money';
-import { CartItemInterface } from 'src/core/types/model.d'
+import { ProductInterface } from 'src/core/types/model'
 import { v4 as uuidv4 } from 'uuid';
 
 const cart = useCartStore();
@@ -194,7 +194,7 @@ onActivated(() => {
   price.value = '';
 });
 
-function formatProduct(product): CartItemInterface {
+function formatProduct(product): ProductInterface {
   return {
     type: 'products',
     id: -1,

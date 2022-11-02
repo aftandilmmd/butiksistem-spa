@@ -1,7 +1,5 @@
-import { CartItemType } from './../types/cart-type.d';
-import { DiscountType } from '../types/model.d';
-import { TransactionType } from '../types/model.d';
-import { VariantInterface } from '../types/model.d';
+import { VariantInterface, DiscountType, TransactionType } from 'src/core/types/model';
+import { CartItemType } from 'src/core/types/cart-types';
 import Variant from './Variant';
 
 function CartItem(model: CartItemType){

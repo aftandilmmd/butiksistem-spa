@@ -98,7 +98,7 @@
 <script setup lang="ts">
 import ProductVariantDialog from 'src/components/terminal/product/dialog/ProductVariantDialog.vue';
 import ProductStockDialog from 'src/components/terminal/product/dialog/ProductStockDialog.vue';
-import { ProductInterface, VariantInterface, CartItemInterface } from 'src/core/types/model';
+import { ProductInterface, VariantInterface } from 'src/core/types/model';
 
 import { reactive } from 'vue';
 
@@ -111,7 +111,7 @@ import { useProduct } from 'src/core/composables/useProduct';
 import { positiveNotify } from 'src/utils/Notify';
 
 const props = defineProps<{ product: ProductInterface }>()
-const emit  = defineEmits<{ (e: 'select-variant', value: ProductInterface | CartItemInterface): void }>()
+const emit  = defineEmits<{ (e: 'select-variant', value: ProductInterface): void }>()
 
 const CartManager = useCart();
 const ProductManager = useProduct();
