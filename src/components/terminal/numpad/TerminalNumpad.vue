@@ -131,16 +131,16 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-
 import EmptyProductDialog from 'src/components/terminal/numpad/dialog/EmptyProductDialog.vue';
-import { useCartStore } from 'src/stores/terminal/cart-store';
 
 import { ref, computed, onActivated, reactive } from 'vue';
 import { Money } from 'src/utils/Money';
 import { ProductInterface } from 'src/core/types/model'
 import { v4 as uuidv4 } from 'uuid';
+import { useCart } from 'src/core/composables/useCart';
+import Product from 'src/core/models/Product';
 
-const cart = useCartStore();
+const CartManager = useCart();
 
 const price = ref('');
 
@@ -178,7 +178,10 @@ function showEmptyProductPanel() {
 }
 
 function addProduct(product) {
-  cart.add(formatProduct(product));
+  const formated_product = formatProduct(product);
+  const variant = Product(formated_product).getFirstVariant()
+  CartManager.addItem(formated_product, variant);
+
   price.value = '';
 }
 
@@ -197,24 +200,21 @@ onActivated(() => {
 function formatProduct(product): ProductInterface {
   return {
     type: 'products',
-    id: -1,
+    id: -1 * (CartManager.getItems().length + 1),
     attributes:{
       name: 'Tanımsız ürün',
       price: Number(price.value),
-      tax_rate: product.tax_rate,
+      tax_rate: Number(product.tax_rate),
     },
     relations:{
       variants: [
         {
           type: 'variants',
-          id: -1,
+          id: -1 * (CartManager.getItems().length + 1),
           attributes:{
             name: 'Tanımsız varyant',
             price: Number(price.value),
             quantity: 1,
-          },
-          meta:{
-            hash_id: uuidv4()
           }
         }
       ]
