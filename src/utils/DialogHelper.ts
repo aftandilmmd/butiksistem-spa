@@ -1,21 +1,21 @@
 import { Dialog } from 'quasar';
 
-function confirmDialog({ title = 'Uyarı', message = 'Devam istediğinize emin misiniz?' } =  {}): Promise<void> {
+function confirmDialog({ title = 'Uyarı', message = 'Devam istediğinize emin misiniz?', confirm_label = 'Tamam', persistent = false} =  {}): Promise<void> {
 
   return new Promise((resolve, reject): void => {
 
     Dialog.create({
       title,
       message,
+      persistent,
       cancel: {
-          flat: true,
-          label: 'İptal',
-          unelevated: true,
+        flat: true,
+        label: 'İptal',
+        unelevated: true,
       },
       ok: {
-          flat: true,
-          label: 'Sil',
-          unelevated: true,
+        flat: true,
+        label: confirm_label,
       },
     })
     .onOk(() => resolve())
