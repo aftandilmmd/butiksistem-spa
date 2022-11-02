@@ -44,7 +44,7 @@
 
         <ul class="w-full list-none p-0 m-0">
           <li
-            v-for="(customer, index) in customers"
+            v-for="(customer, index) in CustomerManager.getCustomers()"
             :key="index"
             @click="selectCustomer(customer)"
             class="cursor-pointer hover:bg-blue-50 px-8 py-4 border-gray-200 border-t-0 border-l-0 border-r-0 border-b border-solid"
@@ -52,11 +52,11 @@
             <div class="flex flex-col">
 
               <span class="font-semibold text-base text-gray-600">
-                {{ getCustomerFullName(customer) }}
+                {{ Customer(customer).getFullName() }}
               </span>
 
               <span class="font-medium text-gray-400 text-md">
-                {{ customer.phone }}
+                {{ Customer(customer).getPhone() }}
               </span>
 
             </div>
@@ -74,37 +74,34 @@
   </q-dialog>
 </template>
 
-<script>
-import CreateCustomerDialog from "src/components/terminal/customer/dialog/CreateCustomerDialog.vue";
-</script>
+<script setup lang="ts">
+import CreateCustomerDialog from 'src/components/terminal/customer/dialog/CreateCustomerDialog.vue';
+import { ref, watch, onMounted, reactive } from 'vue';
+import { debounce } from 'lodash';
+import { useCustomer } from 'src/core/composables/useCustomer';
+import Customer from 'src/core/models/Customer';
+import { CustomerInterface } from 'src/core/types/cart-types';
 
-<script setup>
-import { ref, watch, onMounted, computed, reactive } from "vue";
-import { debounce } from "lodash";
-import { useCustomerStore } from "src/stores/terminal/customer-store";
+const CustomerManager = useCustomer();
 
-const customerStore = useCustomerStore();
+const emit = defineEmits(['hide', 'create-customer', 'select-customer']);
 
-const emit = defineEmits(["hide", "create-customer", "select-customer"]);
-
-const searchValue = ref(null);
-const customer_search_input = ref(null);
+const searchValue = ref('');
+const customer_search_input = ref();
 
 const dialogs = reactive({
   create_customer: false,
 })
 
-let customers = computed(() => customerStore.get_customers)
-
 watch(searchValue, value => searchCustomer(value));
 
 let searchCustomer = debounce( value => {
-  emit("search-customer", value);
+  emit('search-customer', value);
 }, 500);
 
-function selectCustomer(customer) {
-  emit("select-customer", customer);
-  emit("hide");
+function selectCustomer(customer: CustomerInterface) {
+  emit('select-customer', customer);
+  emit('hide');
 }
 
 function showCreateCustomerDialog() {
@@ -115,7 +112,4 @@ onMounted(() => {
   setTimeout(() => customer_search_input.value.focus(), 100);
 });
 
-function getCustomerFullName(customer){
-  return customer.first_name + ' ' + customer.last_name;
-}
 </script>
