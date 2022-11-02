@@ -1,7 +1,8 @@
+import { PaymentType } from 'src/core/types/model.d';
 import { CartStateInterface, CustomerInterface, AddressInterface, CartTaxRateInterface, CartTransactionInterface, ProductInterface, VariantInterface, ParkItemInterface } from 'src/core/types/model.d';
 import { CartItemType } from 'src/core/types/cart-type.d';
 
-import { groupBy, NumericDictionary, sum } from 'lodash';
+import { groupBy, NumericDictionary, sum, sumBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { calculateTax } from 'src/utils/Money';
 import { useParkStore } from 'src/stores/terminal/park-store';
@@ -105,6 +106,18 @@ export function useCart(store: CartStateInterface = useCartStore()){
     return store.items;
   }
 
+  function hasItems(): boolean {
+    return getItems().length > 0;
+  }
+
+  function getItemsCount(): number {
+    return getItems().length;
+  }
+
+  function getVariantsCount(): number {
+    return getItems().reduce((total, item) => (total += CartItem(item).getQuantity()), 0)
+  }
+
   function setItems(items: CartItemType[]): void {
     store.items = items;
   }
@@ -118,8 +131,40 @@ export function useCart(store: CartStateInterface = useCartStore()){
     store.customer = customer;
   }
 
+  function removeCustomer(): void {
+    store.customer = <CustomerInterface>{};
+  }
+
+  function getCustomerFullName(): string {
+    const first_name = getCustomer().first_name;
+    const last_name = getCustomer().last_name;
+
+    if (!first_name || !last_name) {
+      return '';
+    }
+
+    return first_name + ' ' + last_name
+
+  }
+
+  function getCustomerPhone(): string | null {
+    return getCustomer().phone;
+  }
+
+  function getCustomerEmail(): string | null {
+    return getCustomer().email;
+  }
+
+  function getCustomerMeta(): object | undefined {
+    return getCustomer().meta;
+  }
+
   function getCustomer(): CustomerInterface {
     return store.customer
+  }
+
+  function hasCustomer(): boolean {
+    return !!getCustomerFullName().trim()
   }
 
   // Address Setter & Getters
@@ -139,16 +184,29 @@ export function useCart(store: CartStateInterface = useCartStore()){
     return store.billing_address;
   }
 
-  function addTransaction(transaction: CartTransactionInterface): void {
+  function addTransaction(transaction_object: { payment_type: PaymentType, amount: number }): void {
+    const transaction : CartTransactionInterface = { id: uuidv4(), ...transaction_object }
     store.transactions.push(transaction);
   }
 
   function cancelTransaction(hash_id: string): void {
-    store.transactions = store.transactions.filter((transaction: CartTransactionInterface) => transaction.hash_id != hash_id);
+    store.transactions = store.transactions.filter((transaction: CartTransactionInterface) => transaction.id !== hash_id);
+  }
+
+  function clearTransactions(): void {
+    store.transactions = [];
   }
 
   function getTransactions(): CartTransactionInterface[] {
     return store.transactions;
+  }
+
+  function getTransactionsTotalAmount(): number {
+    return getTransactions().length > 0 ? sumBy(getTransactions(), 'amount') : 0;
+  }
+
+  function getTransactionsRemainingAmount(): number {
+    return getTotalPrice() < 0 ? 0 : getTotalPrice() - getTransactionsTotalAmount();
   }
 
   function getTotalPrice(): number {
@@ -198,9 +256,18 @@ export function useCart(store: CartStateInterface = useCartStore()){
 
     getItems,
     setItems,
+    hasItems,
+    getItemsCount,
+    getVariantsCount,
 
     setCustomer,
     getCustomer,
+    removeCustomer,
+    hasCustomer,
+    getCustomerFullName,
+    getCustomerPhone,
+    getCustomerEmail,
+    getCustomerMeta,
 
     setShippingAddress,
     getShippingAddress,
@@ -211,6 +278,7 @@ export function useCart(store: CartStateInterface = useCartStore()){
     getTransactions,
     addTransaction,
     cancelTransaction,
+    clearTransactions,
 
     getTotalPrice,
     createOrder,
@@ -223,6 +291,8 @@ export function useCart(store: CartStateInterface = useCartStore()){
     getItemIndexByVariant,
     getItemByVariant,
     incItemQuantity,
+    getTransactionsTotalAmount,
+    getTransactionsRemainingAmount,
   }
 
 }
