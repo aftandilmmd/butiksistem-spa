@@ -36,15 +36,6 @@ export interface VariantInterface{
     quantity : number,
     barcode? : number,
   },
-
-  meta:{
-    hash_id?: string,
-    transaction_type?: 'custom' | 'discount',
-    discount_type?: 'percent' | 'fixed',
-    amount?: number | null,
-    note?: string
-  }
-
 }
 
 export interface CategoryInterface{
