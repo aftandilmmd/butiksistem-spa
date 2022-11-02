@@ -6,17 +6,16 @@
       <div class="flex h-[1.75rem]">
 
         <span class="w-1/2 text-base font-medium text-gray-400">
-          Toplam Ürün / Ürün Çeşidi
+          Toplam ürün / Ürün çeşidi
         </span>
 
         <span class="w-1/2 text-right text-base font-medium text-gray-400">
-          {{ cartStore.getVariantsCount }} /
-          {{ cartStore.getItemsCount }}
+          {{ CartManager.getVariantsCount() }} / {{ CartManager.getItemsCount() }}
         </span>
 
       </div>
 
-      <div v-for="tax in cartStore.getTaxPrices" :key="tax.rate" class="flex h-[1.75rem]" >
+      <div v-for="tax in CartManager.getTaxPrices()" :key="tax.rate" class="flex h-[1.75rem]" >
 
         <span class="w-1/2 text-base font-medium text-gray-400">
           %{{ tax.rate }}
@@ -70,6 +69,8 @@
 <script setup>
 import { useCartStore } from 'src/stores/terminal/cart-store';
 import { Money } from 'src/utils/Money';
+import { useCart } from 'src/core/composables/useCart'
+
 
 defineProps({
   items: {
@@ -80,5 +81,6 @@ defineProps({
 
 const emit = defineEmits(['discount-click', 'fastpay-click', 'confirm-click']);
 
+const CartManager = useCart();
 const cartStore = useCartStore();
 </script>
