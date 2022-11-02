@@ -33,6 +33,23 @@ export function useProduct(store = useProductStore()){
     store.favorite_ids = store.favorite_ids.filter((id: number) => id != Product(product).getId());
   }
 
+  function toggleFavorite(product: ProductInterface): Promise<string>{
+
+    return new Promise((resolve, reject) => {
+
+      if (! isFavorited(product)) {
+        favorite(product);
+        resolve('favorited');
+        return;
+      }
+
+      unfavorite(product);
+      reject('unfavorited');
+
+    });
+
+  }
+
   function isFavorited(product: ProductInterface){
     return store.favorite_ids.findIndex((id: number) => id == Product(product).getId()) != -1
   }
@@ -74,6 +91,7 @@ export function useProduct(store = useProductStore()){
     item,
     favorite,
     unfavorite,
+    toggleFavorite,
     isFavorited,
     getProducts,
     getProductsCount,
