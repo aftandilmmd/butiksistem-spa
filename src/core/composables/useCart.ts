@@ -6,10 +6,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { calculateTax } from 'src/utils/Money';
 import { useParkStore } from 'src/stores/terminal/park-store';
 import { useCartStore } from 'src/stores/terminal/cart-store';
+import { usePark } from './usePark';
 import CartItem from '../models/CartItem';
 import Product from '../models/Product';
 import Variant from '../models/Variant';
-import { usePark } from './usePark';
+import Customer from '../models/Customer';
 
 export function useCart(store: CartStateInterface = useCartStore()){
 
@@ -27,13 +28,11 @@ export function useCart(store: CartStateInterface = useCartStore()){
   }
 
   function setCurrentCart(cart: CartStateInterface) {
-    return {
-      items: cart.items,
-      customer: cart.customer,
-      shipping_address: cart.shipping_address,
-      billing_address: cart.billing_address,
-      transactions: cart.transactions,
-    }
+    store.items = cart.items;
+    store.customer = cart.customer;
+    store.shipping_address = cart.shipping_address;
+    store.billing_address = cart.billing_address;
+    store.transactions = cart.transactions;
   }
 
   function parkCurrentCart(title = ''): ParkItemInterface {
@@ -46,7 +45,7 @@ export function useCart(store: CartStateInterface = useCartStore()){
 
   function addItem(product: ProductInterface, variant: VariantInterface, quantity = 1): void {
 
-    const cart_item = getItemByVariant(variant)
+    const cart_item = getItemByVariant(variant);
 
     if(cart_item){
       incItemQuantity(cart_item)
@@ -135,27 +134,19 @@ export function useCart(store: CartStateInterface = useCartStore()){
   }
 
   function getCustomerFullName(): string {
-    const first_name = getCustomer().first_name;
-    const last_name = getCustomer().last_name;
-
-    if (!first_name || !last_name) {
-      return '';
-    }
-
-    return first_name + ' ' + last_name
-
+    return Customer(getCustomer()).getFullName();
   }
 
   function getCustomerPhone(): string | null {
-    return getCustomer().phone;
+    return Customer(getCustomer()).getPhone();
   }
 
   function getCustomerEmail(): string | null {
-    return getCustomer().email;
+    return Customer(getCustomer()).getEmail();
   }
 
   function getCustomerMeta(): object | undefined {
-    return getCustomer().meta;
+    return Customer(getCustomer()).getMeta();
   }
 
   function getCustomer(): CustomerInterface {
@@ -209,7 +200,7 @@ export function useCart(store: CartStateInterface = useCartStore()){
   }
 
   function getTotalPrice(): number {
-    return sum(store.items.map(item => CartItem(item).getTotalPrice()));
+    return sum(store.items.map(item => CartItem(item).getUpdatedTotalPrice()));
   }
 
   function getTaxPrices(): CartTaxRateInterface[] {
