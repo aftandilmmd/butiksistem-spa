@@ -5,16 +5,16 @@
 
       <div class="flex w-full h-20 bg-[#263238]">
 
-        <div v-if="cartStore.hasCustomer" class="flex-1 flex items-center px-4">
+        <div v-if="CartManager.hasCustomer()" class="flex-1 flex items-center px-4">
 
           <div class="flex-1 flex flex-col py-2">
 
             <span class="font-semibold text-base text-gray-200">
-              {{ cartStore.getCustomerFullName }}
+              {{ CartManager.getCustomerFullName() }}
             </span>
 
-            <span v-if="cartStore.customer.phone" class="font-medium text-gray-500 text-md">
-              {{ cartStore.customer.phone }}
+            <span v-if="CartManager.getCustomerPhone()" class="font-medium text-gray-500 text-md">
+              {{ CartManager.getCustomerPhone() }}
             </span>
 
           </div>
@@ -45,7 +45,7 @@
         />
 
         <q-btn
-          :disabled="!cartStore.hasItems"
+          :disabled="!CartManager.hasItems()"
           @click="currentPanel = 'action'"
           icon="more_horiz"
           color="blue-grey-10"
@@ -57,7 +57,7 @@
 
       </div>
 
-      <div v-if="cartStore.hasItems" class="relative z-20 flex flex-col flex-1 bg-white overflow-hidden">
+      <div v-if="CartManager.hasItems()" class="relative z-20 flex flex-col flex-1 bg-white overflow-hidden">
         <q-scroll-area class="w-full flex-1">
           <cart-items />
         </q-scroll-area>
@@ -100,21 +100,18 @@
   </q-dialog>
 </template>
 
-<script>
+<script setup lang="ts">
 import CartItems from 'src/components/terminal/cart/CartItems.vue';
 import CartActions from 'src/components/terminal/cart/CartActions.vue';
-
 import CustomerPanel from 'src/components/terminal/sidebar/panel/CustomerPanel.vue';
 import ActionPanel from 'src/components/terminal/sidebar/panel/ActionPanel.vue';
-
 import PaymentConfirmationDialog from 'src/components/terminal/payment/dialog/PaymentConfirmationDialog.vue';
 import PaymentDialog from 'src/components/terminal/payment/dialog/PaymentDialog.vue';
-</script>
 
-<script setup>
 import { ref, reactive, provide } from 'vue';
-import { useCartStore } from 'src/stores/terminal/cart-store';
-import { useQuasar } from 'quasar';
+import { CustomerInterface } from 'src/core/types/cart-types';
+import { positiveNotify } from 'src/utils/Notify';
+import { useCart } from 'src/core/composables/useCart';
 
 const emit = defineEmits([
   'search-customer',
@@ -126,27 +123,22 @@ provide('actionPanel', {
   complete: () => (currentPanel.value = 'cart'),
 });
 
-const $q = useQuasar();
+const CartManager = useCart();
 
 const dialogs = reactive({
   payment: false,
   payment_confirmation: false,
 })
 
-const cartStore    = useCartStore();
 const currentPanel = ref('cart');
 
-function selectCustomer(customer) {
+function selectCustomer(customer: CustomerInterface) {
 
-  cartStore.setCustomer(customer);
+  CartManager.setCustomer(customer);
 
   emit('select-customer', customer);
 
-  $q.notify({
-    type: 'positive',
-    position:'bottom-right',
-    message: 'Müşteri seçildi.'
-  });
+  positiveNotify('Müşteri seçildi.')
 
 }
 
@@ -175,6 +167,6 @@ function completePayment() {
 }
 
 function removeCustomer() {
-  cartStore.setCustomer({})
+  CartManager.removeCustomer()
 }
 </script>
