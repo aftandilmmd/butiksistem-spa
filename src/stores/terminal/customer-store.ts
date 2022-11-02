@@ -1,10 +1,11 @@
+import { useStorage } from '@vueuse/core';
 import { CustomerInterface } from 'src/core/types/cart-types';
 import { defineStore } from 'pinia';
 
 export const useCustomerStore = defineStore('customerStore', {
 
   state: () => ({
-    customers: <CustomerInterface[]>[]
+    customers: useStorage<CustomerInterface[]>('customers', [])
   }),
 
   getters: {
