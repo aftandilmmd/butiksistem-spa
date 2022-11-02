@@ -112,6 +112,7 @@ import { ref, reactive, provide } from 'vue';
 import { CustomerInterface } from 'src/core/types/cart-types';
 import { positiveNotify } from 'src/utils/Notify';
 import { useCart } from 'src/core/composables/useCart';
+import { useCustomer } from 'src/core/composables/useCustomer';
 
 const emit = defineEmits([
   'search-customer',
@@ -124,6 +125,7 @@ provide('actionPanel', {
 });
 
 const CartManager = useCart();
+const CustomerManager = useCustomer();
 
 const dialogs = reactive({
   payment: false,
@@ -133,6 +135,8 @@ const dialogs = reactive({
 const currentPanel = ref('cart');
 
 function selectCustomer(customer: CustomerInterface) {
+
+  CustomerManager.addCustomer(customer);
 
   CartManager.setCustomer(customer);
 
