@@ -111,7 +111,7 @@ import { useProduct } from 'src/core/composables/useProduct';
 import { positiveNotify } from 'src/utils/Notify';
 
 const props = defineProps<{ product: ProductInterface }>()
-const emit  = defineEmits<{ (e: 'select-variant', value: ProductInterface): void }>()
+// const emit  = defineEmits<{ (e: 'select-variant', value: ProductInterface): void }>()
 
 const CartManager = useCart();
 const ProductManager = useProduct();
@@ -136,11 +136,9 @@ function selectVariant(variant: VariantInterface): void {
 
   if (! Variant(variant).hasQuantity() ) return;
 
-  let cart_item = Product(props.product).create(variant);
-
   CartManager.addItem(props.product, variant);
 
-  emit('select-variant', cart_item);
+  positiveNotify(`${ Product(props.product).getName() } (${ Variant(variant).getName() }) sepete eklendi.`);
 
 }
 
@@ -152,14 +150,10 @@ function favorite(product: ProductInterface) {
 
   const product_name = Product(product).getName();
 
-  if (ProductManager.isFavorited(product)) {
-    ProductManager.unfavorite(product);
-    positiveNotify(`${product_name} favorilerden çıkarıldı.`)
-    return
-  }
+  ProductManager.toggleFavorite(product)
+  .then( () => positiveNotify(`${product_name} favorilere eklendi.`))
+  .catch( () => positiveNotify(`${product_name} favorilerden çıkarıldı.`));
 
-  ProductManager.favorite(product);
-  positiveNotify(`${product_name} favorilere eklendi.`)
 }
 
 </script>
