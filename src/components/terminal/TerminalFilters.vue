@@ -29,20 +29,17 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { useProductStore } from 'src/stores/terminal/product-store';
 import { useProduct } from 'src/core/composables/useProduct';
 import ProductCategory from 'src/core/models/ProductCategory';
 
 const ProductManager = useProduct();
 const emit = defineEmits(['changed']);
 
-const productStore = useProductStore();
-
 const tab = ref(JSON.stringify({ id: -1, url: 'all' , name: 'Tüm ürünler' }));
 
 watch(tab, () => emit('changed', JSON.parse(tab.value)));
 
-let categories = computed( () => productStore.unique_categories );
+let categories = computed( () => ProductManager.getUniqueCategories() );
 let favorites_label = computed( () => ProductManager.getFavoritesCount() > 0 ? `Favoriler (${ProductManager.getFavoritesCount()})` : 'Favoriler' );
 let all_products_label = computed( () => ProductManager.getFavoritesCount() > 0 ? `Tüm Ürünler (${ProductManager.getProductsCount()})` : 'Tüm Ürünler' );
 
