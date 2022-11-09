@@ -1,6 +1,6 @@
 import { ProductInterface } from 'src/core/types/model.d';
 
-export type SaleSellerType = {
+export type OrderSellerType = {
   type : 'sellers',
   id   : number,
   attributes: {
@@ -10,8 +10,8 @@ export type SaleSellerType = {
   }
 }
 
-export type SaleItemType = {
-  type: 'sales',
+export type OrderItemType = {
+  type: 'orders',
   id: string,
   attributes: {
     customer_name: string,
@@ -23,10 +23,10 @@ export type SaleItemType = {
     payment_total: number
   },
   relations:{
-    seller: SaleSellerType,
+    seller: OrderSellerType,
     products: ProductInterface[],
-    sale_products: SaleProductType[],
-    activities: SaleActivity[],
+    order_products: OrderProductType[],
+    activities: OrderActivity[],
   },
   computed: {
     status_data: {
@@ -47,11 +47,11 @@ export type SaleItemType = {
   }
 }
 
-export type SaleProductType = {
-  type: 'sale_products',
+export type OrderProductType = {
+  type: 'order_products',
   id: number,
   attributes: {
-      sale_id: number,
+      order_id: number,
       product_id: null | number,
       variant_id: number,
       variant_name: string,
@@ -67,8 +67,8 @@ export type SaleProductType = {
   }
 }
 
-export type SaleActivityType = {
-  type: 'sale_activities',
+export type OrderActivityType = {
+  type: 'order_activities',
   id: number,
   attributes: {
       created_at: string,

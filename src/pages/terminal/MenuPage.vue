@@ -2,7 +2,7 @@
   <q-page class="h-screen flex items-center bg-gray-900">
     <div class="w-1/2 pl-16 q-pa-md text-white">
       <q-list class="w-6/12">
-        <q-item to="/terminal/sale" clickable>
+        <q-item to="/terminal/order" clickable>
           <q-item-section>Satış Ekranı</q-item-section>
         </q-item>
 

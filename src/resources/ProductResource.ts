@@ -12,7 +12,7 @@ function ProductResource(product = {}) {
       id: product?.variant?.id,
       name: product?.variant?.name,
       price: product?.variant?.price,
-      salePrice: product?.variant?.salePrice,
+      orderPrice: product?.variant?.orderPrice,
       quantity: 1,
       hash_id: uuidv4(),
     },

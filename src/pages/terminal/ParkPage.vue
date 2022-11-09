@@ -120,7 +120,7 @@ async function restorePark(park) {
     });
 
     ParkManager.restorePark(park);
-    router.push({ path: 'sale' });
+    router.push({ path: 'order' });
     positiveNotify('Sepetiniz geri yüklendi.');
 
   } catch (e) {

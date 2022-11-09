@@ -1,6 +1,6 @@
-import { SaleActivityType } from 'src/core/types/sale-types';
+import { OrderActivityType } from 'src/core/types/order-types';
 
-function SaleActivity(model: SaleActivityType){
+function OrderActivity(model: OrderActivityType){
 
   function getId(){
     return model.id;
@@ -27,4 +27,4 @@ function SaleActivity(model: SaleActivityType){
 
 }
 
-export default SaleActivity;
+export default OrderActivity;

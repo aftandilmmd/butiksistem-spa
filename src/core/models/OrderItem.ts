@@ -1,14 +1,14 @@
-import { SaleActivity } from './../types/sale-types.d';
+import { OrderActivity } from './../types/order-types.d';
 import { useCart } from 'src/core/composables/useCart';
 import { CartItemType, CartTaxRateInterface } from 'src/core/types/cart-types';
 import { ProductInterface } from 'src/core/types/model.d';
-import { SaleItemType, SaleProductType } from 'src/core/types/sale-types';
+import { OrderItemType, OrderProductType } from 'src/core/types/order-types';
 import { v4 } from 'uuid';
 
 
 const CartManager = useCart();
 
-function SaleItem(model: SaleItemType){
+function OrderItem(model: OrderItemType){
 
   function getId(){
     return model.id;
@@ -67,13 +67,13 @@ function SaleItem(model: SaleItemType){
     return model.relations?.products ?? [];
   }
 
-  function getSaleProducts(): SaleProductType[]{
-    return model.relations?.sale_products ?? [];
+  function getOrderProducts(): OrderProductType[]{
+    return model.relations?.order_products ?? [];
   }
 
-  function getSaleItems(): CartItemType[]{
+  function getOrderItems(): CartItemType[]{
 
-    return getSaleProducts().map( (product: SaleProductType, index) => {
+    return getOrderProducts().map( (product: OrderProductType, index) => {
 
       return {
         type: 'cart_items',
@@ -107,15 +107,15 @@ function SaleItem(model: SaleItemType){
   }
 
   function getTaxPrices(): CartTaxRateInterface[] {
-    return CartManager.getTaxPrices(getSaleItems());
+    return CartManager.getTaxPrices(getOrderItems());
   }
 
   function getTotalPrice(): number {
-    return CartManager.getTotalPrice(getSaleItems());
+    return CartManager.getTotalPrice(getOrderItems());
   }
 
   function getVariantsCount(): number {
-    return CartManager.getVariantsCount(getSaleItems());
+    return CartManager.getVariantsCount(getOrderItems());
   }
 
   function getProductNameByIndex(index){
@@ -126,7 +126,7 @@ function SaleItem(model: SaleItemType){
     return getProducts()[index]?.attributes?.tax_rate
   }
 
-  function getActivities(): SaleActivity[]{
+  function getActivities(): OrderActivity[]{
     return model.relations?.activities ?? [];
   }
 
@@ -145,8 +145,8 @@ function SaleItem(model: SaleItemType){
     getStatusTitle,
     getCustomer,
     getProducts,
-    getSaleProducts,
-    getSaleItems,
+    getOrderProducts,
+    getOrderItems,
     getProductNameByIndex,
     getTaxRateByIndex,
     getTaxPrices,
@@ -157,4 +157,4 @@ function SaleItem(model: SaleItemType){
 
 }
 
-export default SaleItem;
+export default OrderItem;

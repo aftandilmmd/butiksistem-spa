@@ -21,7 +21,7 @@
       <q-table
         flat
         class="w-full h-full"
-        :rows="sales"
+        :rows="orders"
         :columns="columns"
         row-key="name"
         v-model:pagination="pagination"
@@ -29,7 +29,7 @@
         binary-state-sort
         :rows-per-page-options="rows_per_page_options"
         @request="onRequest"
-        @row-click="showDetail"
+        @row-click="showOrder"
       >
         <template v-if="false" v-slot:loading>
           <q-inner-loading showing color="primary" />
@@ -64,7 +64,7 @@
 
       <div class="relative flex items-center border-0 border-b border-solid border-gray-200">
         <q-btn
-          @click="closeDetail"
+          @click="closeOrderDrawer"
           icon="close"
           text-color="grey-9"
           size="lg"
@@ -74,7 +74,7 @@
 
         <div class="h-20 mx-auto flex items-center">
           <h1 class="text-gray-400 text-xl font-medium">
-            Satış No: <span class="text-gray-900 font-semibold">{{ SaleItem(current_sale).getId() }}</span>
+            Satış No: <span class="text-gray-900 font-semibold">{{ OrderItem(current_order).getId() }}</span>
           </h1>
         </div>
 
@@ -95,15 +95,15 @@
       <q-scroll-area class="w-full flex-1 bg-gray-100 p-8">
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <customer-panel :customer="SaleItem(current_sale).getCustomer()" />
+            <customer-panel :customer="OrderItem(current_order).getCustomer()" />
 
-            <order-activity-panel :order="current_sale" />
+            <order-activity-panel :order="current_order" />
 
             <payments-panel />
           </div>
 
           <div>
-            <products-panel :order="current_sale" />
+            <products-panel :order="current_order" />
           </div>
         </div>
       </q-scroll-area>
@@ -127,21 +127,21 @@ import PaymentsPanel from 'src/components/terminal/history/components/PaymentsPa
 import ProductsPanel from 'src/components/terminal/history/components/ProductsPanel.vue';
 
 import { ref, onBeforeMount, computed } from 'vue';
-import { useSale } from 'src/core/composables/useSale';
-import { SaleItemType } from 'src/core/types/sale-types';
+import { useOrder } from 'src/core/composables/useOrder';
+import { OrderItemType } from 'src/core/types/order-types';
 import { getFormattedDate } from 'src/utils/DateTime';
-import SaleItem from 'src/core/models/SaleItem';
+import OrderItem from 'src/core/models/OrderItem';
 import { Money } from 'src/utils/Money';
 import { useRoute, useRouter } from 'vue-router';
 
-const SaleManager = useSale();
+const OrderManager = useOrder();
 
 const route = useRoute();
 const router = useRouter();
 
 const detailDrawer = ref(false);
 
-const current_sale = computed(() => SaleManager.getCurrentSale());
+const current_order = computed(() => OrderManager.getCurrentOrder());
 const loading = ref(false);
 const pagination = ref({
   sortBy: 'desc',
@@ -151,7 +151,7 @@ const pagination = ref({
   rowsNumber: 1000,
 });
 
-const rows_per_page_options = [25, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+const rows_per_page_options = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500];
 
 const columns = [
   {
@@ -205,35 +205,35 @@ const columns = [
   },
 ];
 
-const sales = computed(() =>
-  SaleManager.getSales().map((sale: SaleItemType) => ({
-    id: SaleItem(sale).getId(),
-    customer_name: SaleItem(sale).getCustomerName(),
-    date: getFormattedDate(SaleItem(sale).getCreatedAt()),
-    payment_type: SaleItem(sale).getPaymentTitle(),
-    status: SaleItem(sale).getStatusTitle(),
-    total_price: Money(SaleItem(sale).getPaymentTotal()),
-    staff_name: SaleItem(sale).getSellerFullName(),
+const orders = computed(() =>
+  OrderManager.getOrders().map((order: OrderItemType) => ({
+    id: OrderItem(order).getId(),
+    customer_name: OrderItem(order).getCustomerName(),
+    date: getFormattedDate(OrderItem(order).getCreatedAt()),
+    payment_type: OrderItem(order).getPaymentTitle(),
+    status: OrderItem(order).getStatusTitle(),
+    total_price: Money(OrderItem(order).getPaymentTotal()),
+    staff_name: OrderItem(order).getSellerFullName(),
   }))
 );
 
-async function showDetail(event: PointerEvent, sale: SaleItemType) {
+async function showOrder(event: PointerEvent, order: OrderItemType) {
   loading.value = true;
-  await SaleManager.getSaleFromServer(sale.id);
+  await OrderManager.getOrderFromServer(order.id);
   loading.value = false;
   detailDrawer.value = true;
 }
 
-function closeDetail() {
+function closeOrderDrawer() {
   detailDrawer.value = false;
 }
 
-async function syncSales(page: number, rows_per_page: number) {
+async function syncOrders(page: number, rows_per_page: number) {
   pagination.value.page = page;
   pagination.value.rowsPerPage = rows_per_page;
 
-  await SaleManager.getSalesFromServer(page, rows_per_page);
-  pagination.value.rowsNumber = SaleManager.getTotalSalesCount();
+  await OrderManager.getOrdersFromServer(page, rows_per_page);
+  pagination.value.rowsNumber = OrderManager.getTotalOrdersCount();
 
   router.push({
     name: 'terminal_history',
@@ -243,7 +243,7 @@ async function syncSales(page: number, rows_per_page: number) {
 
 async function onRequest(props) {
   loading.value = true;
-  await syncSales(props.pagination.page, props.pagination.rowsPerPage);
+  await syncOrders(props.pagination.page, props.pagination.rowsPerPage);
   pagination.value = props.pagination;
   loading.value = false;
 }
@@ -263,7 +263,7 @@ onBeforeMount(async () => {
   }
 
   loading.value = true;
-  await syncSales(page, per_page);
+  await syncOrders(page, per_page);
   loading.value = false;
 
   document.addEventListener('keydown', async function(event){
@@ -275,9 +275,9 @@ onBeforeMount(async () => {
       pagination.value.page = pagination.value.page - 1;
     }
 
-    pagination.value.page = (pagination.value.page < 1 || pagination.value.page > SaleManager.getLastPage()) ? 1 : pagination.value.page;
+    pagination.value.page = (pagination.value.page < 1 || pagination.value.page > OrderManager.getLastPage()) ? 1 : pagination.value.page;
 
-    await syncSales(pagination.value.page, pagination.value.rowsPerPage)
+    await syncOrders(pagination.value.page, pagination.value.rowsPerPage)
   })
 });
 </script>

@@ -10,15 +10,15 @@
         <div class="absolute w-2 h-2 bg-blue-600 rounded-full mt-1.5 -left-1 dark:border-gray-900 dark:bg-gray-700"></div>
 
         <h3 class="text-sm font-medium text-gray-700 dark:text-white mb-2">
-          {{ SaleActivity(activity).getStatusTitle() }}
+          {{ OrderActivity(activity).getStatusTitle() }}
         </h3>
 
         <time class="block text-sm font-normal leading-none text-gray-400 dark:text-gray-500 mb-2">
-          {{ getFormattedDate(SaleItem(order).getCreatedAt()) }}
+          {{ getFormattedDate(OrderItem(order).getCreatedAt()) }}
         </time>
 
         <span v-if="false" class="text-gray-600">
-          {{ SaleItem(order).getVariantsCount() }} parça ürün / {{ Money(SaleItem(order).getTotalPrice()) }}
+          {{ OrderItem(order).getVariantsCount() }} parça ürün / {{ Money(OrderItem(order).getTotalPrice()) }}
         </span>
 
       </li>
@@ -32,23 +32,23 @@
 import PanelWrapper from './PanelWrapper.vue';
 import { computed } from 'vue';
 
-import SaleActivity from 'src/core/models/SaleActivity';
-import SaleItem from 'src/core/models/SaleItem';
+import OrderActivity from 'src/core/models/OrderActivity';
+import OrderItem from 'src/core/models/OrderItem';
 
-import { SaleItemType } from 'src/core/types/sale-types';
+import { OrderItemType } from 'src/core/types/order-types';
 import { getFormattedDate } from 'src/utils/DateTime';
 import { Money } from 'src/utils/Money';
 
-const props = defineProps<{ order: SaleItemType }>()
+const props = defineProps<{ order: OrderItemType }>()
 
-const activities = [ ...SaleItem(props.order).getActivities() ]
+const activities = [ ...OrderItem(props.order).getActivities() ]
 
-const create_activity = computed(() => activities.find(a => SaleActivity(a).getStatusValue() === 'Order::addOrder'))
+const create_activity = computed(() => activities.find(a => OrderActivity(a).getStatusValue() === 'Order::addOrder'))
 
 if(! create_activity.value){
 
   activities.unshift({
-    type: 'sale_activities',
+    type: 'order_activities',
     id: props.order?.id,
     attributes: {
       created_at: props.order?.attributes?.created_at,

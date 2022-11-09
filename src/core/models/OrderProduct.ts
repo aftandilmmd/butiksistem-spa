@@ -1,13 +1,13 @@
-import { SaleProductType } from 'src/core/types/sale-types';
+import { OrderProductType } from 'src/core/types/order-types';
 
-function SaleProduct(model: SaleProductType){
+function OrderProduct(model: OrderProductType){
 
   function getId(){
     return model.id;
   }
 
-  function getSaleId(){
-    return model.attributes.sale_id;
+  function getOrderId(){
+    return model.attributes.order_id;
   }
 
   function getProductId(){
@@ -44,7 +44,7 @@ function SaleProduct(model: SaleProductType){
 
   return {
     getId,
-    getSaleId,
+    getOrderId,
     getProductId,
     getVariantId,
     getPrice,
@@ -57,4 +57,4 @@ function SaleProduct(model: SaleProductType){
 
 }
 
-export default SaleProduct;
+export default OrderProduct;
