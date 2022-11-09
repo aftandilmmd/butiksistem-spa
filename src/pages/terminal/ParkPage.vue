@@ -28,6 +28,7 @@
         <div class="lg:w-8/12 mx-auto p-4 xl:p-6 grid grid-cols-1 gap-y-5 sm:grid-cols-2 sm:gap-x-8 xl:gap-x-5 lg:grid-cols-4">
 
           <div v-for="park in ParkManager.getParks()" :key="park.id" class="cursor-pointer group relative overflow-hidden p-5 border border-solid border-gray-800 bg-black/25 rounded text-center text-white flex flex-col items-center">
+
             <div>
 
               <span class="text-xl block text-center mb-12">{{ park.title }}</span>
@@ -47,10 +48,7 @@
 
             </div>
 
-            <div
-              @click="restorePark(park)"
-              class="group-hover:flex bg-black/25 absolute left-0 right-0 top-0 bottom-0 p-3 hidden flex-col"
-            ></div>
+            <div @click="restorePark(park)" class="group-hover:flex bg-black/25 absolute left-0 right-0 top-0 bottom-0 p-3 hidden flex-col"></div>
 
             <q-btn
               @click="removePark(park)"
@@ -83,7 +81,6 @@ import { usePark } from 'src/core/composables/usePark';
 import { confirmDialog } from 'src/utils/DialogHelper';
 import { positiveNotify } from 'src/utils/Notify';
 import { CartCouldNotBeRestoredError, CartCouldNotBeRemovedError } from 'src/core/exceptions/CartError'
-import { QPage, QBtn, QScrollArea } from 'quasar';
 import { ParkItemInterface } from 'src/core/types/model';
 
 
@@ -120,7 +117,7 @@ async function restorePark(park) {
     });
 
     ParkManager.restorePark(park);
-    router.push({ path: 'order' });
+    router.push({ path: 'sale' });
     positiveNotify('Sepetiniz geri yüklendi.');
 
   } catch (e) {
