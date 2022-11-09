@@ -68,12 +68,7 @@
         />
       </div>
 
-      <div v-else class="flex items-center justify-center text-center flex-1">
-        <div class="text-lg font-light text-gray-400">
-          <p class="m-0 p-0">Satışa başlamak için sepete ürün ekle</p>
-          <p class="m-0 p-0">Hedefine çok az kaldı 👍</p>
-        </div>
-      </div>
+      <empty-cart-message v-else />
 
     </div>
 
@@ -107,6 +102,7 @@ import CustomerPanel from 'src/components/terminal/sidebar/panel/CustomerPanel.v
 import ActionPanel from 'src/components/terminal/sidebar/panel/ActionPanel.vue';
 import PaymentConfirmationDialog from 'src/components/terminal/payment/dialog/PaymentConfirmationDialog.vue';
 import PaymentDialog from 'src/components/terminal/payment/dialog/PaymentDialog.vue';
+import EmptyCartMessage from '../cart/EmptyCartMessage.vue';
 
 import { ref, reactive, provide } from 'vue';
 import { CustomerInterface } from 'src/core/types/cart-types';
