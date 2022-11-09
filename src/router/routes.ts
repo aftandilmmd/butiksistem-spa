@@ -24,6 +24,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/terminal/ParkPage.vue'),
       },
       {
+        name: 'terminal_history',
         path: 'history',
         component: () => import('src/pages/terminal/HistoryPage.vue'),
       },
