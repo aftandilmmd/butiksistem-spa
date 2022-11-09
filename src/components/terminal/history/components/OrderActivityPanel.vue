@@ -49,9 +49,9 @@ if(! create_activity.value){
 
   activities.unshift({
     type: 'sale_activities',
-    id: props.order.id,
+    id: props.order?.id,
     attributes: {
-      created_at: props.order.attributes.created_at,
+      created_at: props.order?.attributes?.created_at,
     },
     computed: {
       status_data: {
