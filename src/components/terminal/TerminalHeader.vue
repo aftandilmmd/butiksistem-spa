@@ -78,12 +78,12 @@ function toggleSearchMode() {
 <style scoped>
 .barcode-animation {
   position: absolute;
-  top: 2rem;
-  left: 2rem;
-  right: 2rem;
+  left: 1.95rem;
+  right: 1.95rem;
   margin: auto;
-  background-color: rgba(255, 35, 82, 0.2);
-  border-bottom: 2px solid rgba(255, 35, 82, 0.5);
+  background-color: rgba(255, 35, 82, 0.4);
+  border-top: 1px solid rgba(255, 35, 82, 0.75);
+  border-bottom: 1px solid rgba(255, 35, 82, 0.75);
   -webkit-animation-name: barcode-animation;
   animation-name: barcode-animation;
   -webkit-animation-duration: 0.7s;
