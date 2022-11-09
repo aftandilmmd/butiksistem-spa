@@ -3,7 +3,7 @@
     <div class="flex flex-col">
       <header class="h-20 flex flex-row border-0 border-b border-solid border-gray-200">
         <q-btn
-        @click="cancelTransactions"
+          @click="cancelTransactions"
           v-close-popup
           icon="arrow_back"
           color="blue-grey-10"
@@ -13,18 +13,36 @@
           class="shadow-inner rounded-none w-24 mr-auto"
         />
 
-        <q-btn
+        <q-btn v-if="!dialogs.cart" @click="toggleCart"
+          icon="shopping_cart"
           no-caps
           label="Sepeti Göster"
-          text-color="blue-7"
+          text-color="grey-8"
           unelevated
-          class="shadow-inner text-base px-8"
+          class="text-base px-8"
+        />
+
+        <q-btn v-else @click="toggleCart"
+          icon="remove_shopping_cart"
+          no-caps
+          label="Sepeti Gizle"
+          text-color="grey-8"
+          unelevated
+          class="text-base px-8"
         />
       </header>
     </div>
 
     <div class="flex-1 grid grid-cols-4">
-      <div class="p-12 col-span-3 flex flex-col items-center border-0 border-r border-solid border-gray-200">
+
+      <div v-if="! CartManager.hasItems()" class="p-12 col-span-3 flex flex-col items-center justify-center border-0 border-r border-solid border-gray-200">
+        <span v-if="is_completed" class="text-2xl text-gray-600 flex flex-col items-center">
+          <q-icon name="production_quantity_limits" class="text-6xl mb-8" />
+          Sepetiniz boş
+        </span>
+      </div>
+
+      <div v-else class="p-12 col-span-3 flex flex-col items-center border-0 border-r border-solid border-gray-200">
         <template v-if="is_completed">
           <div class="w-full flex-1 flex flex-col flex-center">
             <span v-if="is_completed" class="text-2xl text-green-800 mb-16 flex flex-col items-center">
@@ -124,48 +142,64 @@
       </div>
 
       <div class="col-span-1 flex flex-col">
-        <div class="flex flex-col items-end text-gray-900 p-5 py-12 border-0 border-b border-solid border-gray-200">
-          <span class="text-xl mb-1">Ödenecek Tutar</span>
-          <span class="text-5xl">{{ Money(CartManager.getTotalPrice()) }}</span>
-        </div>
 
-        <div class="relative flex flex-1">
-          <q-scroll-area ref="transactions_scroll_area" class="w-full">
-            <div class="bg-white overflow-hidden">
-              <TransitionGroup name="list" tag="ul" class="p-0 m-0 list-none divide-y divide-gray-200">
-                <li v-for="transaction in CartManager.getTransactions()" :key="transaction.id">
-                  <div class="group relative flex justify-between items-center p-5 hover:bg-gray-50 border-0 border-solid border-b border-gray-200">
-                    <span class="text-xl font-light">
-                      <span class="flex items-center" v-if="transaction.payment_type == 'cash'"><q-icon class="text-gray-700 mr-2" name="payments"/> Nakit</span>
-                      <span class="flex items-center" v-if="transaction.payment_type =='credit-card'"><q-icon class="text-gray-700 mr-2" name="payment"/> Kredi Kartı</span>
-                    </span>
 
-                    <span class="text-xl font-medium text-green-500">
-                      {{ Money(transaction.amount) }}
-                    </span>
+        <template v-if="dialogs.cart">
 
-                    <div class="hidden group-hover:flex bg-gray-100/50 absolute left-0 right-0 top-0 bottom-0 flex-center">
-                      <q-btn
-                        @click="cancelTransaction(transaction.id)"
-                        label="İptal Et"
-                        class="bg-red-500 text-white"
-                      />
+          <cart-items v-if="CartManager.hasItems()"/>
+
+          <empty-cart-message v-else />
+
+        </template>
+
+        <template v-else>
+
+          <div class="flex flex-col items-end text-gray-900 p-5 py-12 border-0 border-b border-solid border-gray-200">
+            <span class="text-xl mb-1">Ödenecek Tutar</span>
+            <span class="text-5xl">{{ Money(CartManager.getTotalPrice()) }}</span>
+          </div>
+
+          <div class="relative flex flex-1">
+            <q-scroll-area ref="transactions_scroll_area" class="w-full">
+              <div class="bg-white overflow-hidden">
+                <TransitionGroup name="list" tag="ul" class="p-0 m-0 list-none divide-y divide-gray-200">
+                  <li v-for="transaction in CartManager.getTransactions()" :key="transaction.id">
+                    <div class="group relative flex justify-between items-center p-5 hover:bg-gray-50 border-0 border-solid border-b border-gray-200">
+                      <span class="text-xl font-light">
+                        <span class="flex items-center" v-if="transaction.payment_type == 'cash'"><q-icon class="text-gray-700 mr-2" name="payments"/> Nakit</span>
+                        <span class="flex items-center" v-if="transaction.payment_type =='credit-card'"><q-icon class="text-gray-700 mr-2" name="payment"/> Kredi Kartı</span>
+                      </span>
+
+                      <span class="text-xl font-medium text-green-500">
+                        {{ Money(transaction.amount) }}
+                      </span>
+
+                      <div class="hidden group-hover:flex bg-gray-100/50 absolute left-0 right-0 top-0 bottom-0 flex-center">
+                        <q-btn
+                          @click="cancelTransaction(transaction.id)"
+                          label="İptal Et"
+                          class="bg-red-500 text-white"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </li>
-              </TransitionGroup>
-              <div class="flex justify-between items-center p-5 hover:bg-gray-50 border-0 border-solid border-b border-gray-200">
-                <span class="text-xl font-medium flex items-center">
-                  Kalan Tutar
-                </span>
-                <span class="text-xl font-medium">
-                  {{ remaining_amount }}
-                </span>
+                  </li>
+                </TransitionGroup>
+                <div class="flex justify-between items-center p-5 hover:bg-gray-50 border-0 border-solid border-b border-gray-200">
+                  <span class="text-xl font-medium flex items-center">
+                    Kalan Tutar
+                  </span>
+                  <span class="text-xl font-medium">
+                    {{ remaining_amount }}
+                  </span>
+                </div>
               </div>
-            </div>
-          </q-scroll-area>
-        </div>
+            </q-scroll-area>
+          </div>
+
+        </template>
+
       </div>
+
     </div>
   </div>
 
@@ -176,6 +210,8 @@
 
 <script setup lang="ts">
 import PaymentSuccessDialog from 'src/components/terminal/payment/dialog/PaymentSuccessDialog.vue';
+import CartItems from '../../cart/CartItems.vue';
+import EmptyCartMessage from '../../cart/EmptyCartMessage.vue';
 
 import { ref, computed, reactive } from 'vue';
 import { Money } from 'src/utils/Money';
@@ -191,7 +227,8 @@ let amount = ref(0);
 let amount_input_element = ref<HTMLInputElement>();
 let transactions_scroll_area = ref();
 let dialogs = reactive({
-  payment_complete: false
+  payment_complete: false,
+  cart: false,
 });
 
 const emit = defineEmits(['complete']);
@@ -268,5 +305,9 @@ function cancelTransactions(){
 
 function restart() {
   emit('complete');
+}
+
+function toggleCart(){
+  dialogs.cart = !dialogs.cart
 }
 </script>
