@@ -25,9 +25,6 @@ function Product(model: ProductInterface): ProductModelInterface{
   }
 
   function getQuantity(){
-
-    if( model.attributes?.quantity ) return model.attributes.quantity;
-
     return getVariants().reduce((total: number, variant) => total + Variant(variant).getQuantity(), 0);
 
   }
