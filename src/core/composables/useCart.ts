@@ -112,8 +112,8 @@ export function useCart(store: CartStateInterface = useCartStore()){
     return getItems().length;
   }
 
-  function getVariantsCount(): number {
-    return getItems().reduce((total, item) => (total += CartItem(item).getQuantity()), 0)
+  function getVariantsCount(items = getItems()): number {
+    return items.reduce((total, item) => (total += CartItem(item).getQuantity()), 0)
   }
 
   function setItems(items: CartItemType[]): void {
@@ -199,12 +199,15 @@ export function useCart(store: CartStateInterface = useCartStore()){
     return getTotalPrice() < 0 ? 0 : getTotalPrice() - getTransactionsTotalAmount();
   }
 
-  function getTotalPrice(): number {
-    return sum(store.items.map(item => CartItem(item).getUpdatedTotalPrice()));
+  function getTotalPrice(items = store.items): number {
+    return sum(items.map(item => CartItem(item).getUpdatedTotalPrice()));
   }
 
-  function getTaxPrices(): CartTaxRateInterface[] {
-    const grouped_items: NumericDictionary<CartItemType[]> = groupBy(store.items, item => CartItem(item).getTaxRate())
+  function getTaxPrices(items = store.items): CartTaxRateInterface[] {
+
+    if(items.find(item => CartItem(item).getTaxRate() === undefined)) return [];
+
+    const grouped_items: NumericDictionary<CartItemType[]> = groupBy(items, item => CartItem(item).getTaxRate())
 
       const response: CartTaxRateInterface[] = [];
 
