@@ -99,3 +99,20 @@ export interface ParkItemInterface{
   cart: CartStateInterface,
   created_at: string,
 }
+
+export type PaginationLinkType = {
+  url: string | null,
+  label: string | number,
+  active: boolean
+}
+
+export type PaginationMetaType = {
+  current_page : number,
+  from : number,
+  last_page : number,
+  links : PaginationLinkType[],
+  path : string,
+  per_page : number,
+  to : number,
+  total : number
+}
