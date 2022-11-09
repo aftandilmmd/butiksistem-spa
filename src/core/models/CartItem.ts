@@ -9,7 +9,7 @@ function CartItem(model: CartItemType){
   }
 
   function getName(): string {
-    return model.attributes.product.name;
+    return model.attributes.product.name ?? '<Silinmiş Ürün>';
   }
 
   function getVariantName(): string {
