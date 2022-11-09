@@ -98,23 +98,24 @@ import NoOption from 'src/components/_shared/form/select/NoOption.vue'
 
 <script setup>
 import { reactive } from 'vue';
-import { useCartStore } from 'src/stores/terminal/cart-store';
-import { useCustomerStore } from 'src/stores/terminal/customer-store';
+import { useCart } from 'src/core/composables/useCart';
+import { useCustomer } from 'src/core/composables/useCustomer';
 
-const emit          = defineEmits(['save']);
-const cartStore     = useCartStore();
-const customerStore = useCustomerStore();
+const CartManager = useCart();
+const CustomerManager = useCustomer();
 
-const customer = reactive(Object.create(cartStore.getCustomer));
-const shipping_address = reactive(Object.create(cartStore.getShippingAddress));
+const emit = defineEmits(['save']);
+
+const customer = reactive(Object.create(CartManager.getCustomer()));
+const shipping_address = reactive(Object.create(CartManager.getShippingAddress()));
 
 function save(){
 
-  customerStore.addCustomer(customer);
+  CustomerManager.addCustomer(customer);
 
-  cartStore.setCustomer(customer);
+  CartManager.setCustomer(customer);
 
-  cartStore.setShippingAddress(shipping_address);
+  CartManager.setShippingAddress(shipping_address);
 
   emit('save', customer)
 
